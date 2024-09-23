@@ -11,7 +11,7 @@ This project implements various matching algorithms, including the Deferred Acce
   - [Boston Mechanism](#boston-mechanism)
   - [Top Trading Cycles (TTC)](#top-trading-cycles-ttc)
   - [Linear Programming Algorithms](#linear-programming-algorithms)
-    - [Stable Matching](#stable-matching)
+    - [Stable Matching](#stable-matching-lp)
     - [Egalitarian Stable Matching](#egalitarian-stable-matching)
     - [Nash Welfare Stable Matching](#nash-welfare-stable-matching)
     - [Sex-Equal Stable Matching](#sex-equal-stable-matching)
