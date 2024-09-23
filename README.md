@@ -14,6 +14,8 @@ This project implements various matching algorithms, including the Deferred Acce
     - [Stable Matching](#stable-matching)
     - [Egalitarian Stable Matching](#egalitarian-stable-matching)
     - [Nash Welfare Stable Matching](#nash-welfare-stable-matching)
+    - [Sex-Equal Stable Matching](#sex-equal-stable-matching)
+    - [Utilitarian Stable Matching](#utilitarian-stable-matching)
 - [Contributing](#contributing)
 - [License](#license)
 
@@ -86,6 +88,14 @@ The Egalitarian Stable Matching algorithm, implemented using linear programming,
 ## Nash Welfare Stable Matching
 
 The Nash Welfare Stable Matching algorithm aims to maximize the product of the utilities (or satisfaction) of all participants in the matching. It is a fairness criterion that balances equity and efficiency in matching outcomes.
+
+## Sex-Equal Stable Matching
+
+The Sex-Equal Stable Matching algorithm seeks to balance the satisfaction between two groups (e.g., men and women) in the matching process. It ensures that both sides have similar outcomes in terms of ranks and preferences.
+
+## Utilitarian Stable Matching
+
+The Utilitarian Stable Matching algorithm focuses on maximizing the total utility (or satisfaction) of all participants. It seeks to produce a socially optimal matching where the sum of everyone's satisfaction is maximized.
 
 ## Contributing
 
