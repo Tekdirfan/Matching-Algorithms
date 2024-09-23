@@ -19,6 +19,7 @@ To install the package, use pip:
 
 ```bash
 pip install matching_algorithms
+```
 
 Alternatively, you can clone the repository and install it manually:
 
