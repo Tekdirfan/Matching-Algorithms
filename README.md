@@ -10,6 +10,10 @@ This project implements various matching algorithms, including the Deferred Acce
   - [Deferred Acceptance](#deferred-acceptance)
   - [Boston Mechanism](#boston-mechanism)
   - [Top Trading Cycles (TTC)](#top-trading-cycles-ttc)
+  - [Linear Programming Algorithms](#linear-programming-algorithms)
+    - [Stable Matching](#stable-matching)
+    - [Egalitarian Stable Matching](#egalitarian-stable-matching)
+    - [Nash Welfare Stable Matching](#nash-welfare-stable-matching)
 - [Contributing](#contributing)
 - [License](#license)
 
@@ -50,6 +54,9 @@ boston_matches = boston_mechanism(students, schools)
 # Using the Top Trading Cycles (TTC) mechanism
 ttc_matches = ttc(students, schools)
 
+# Using linear programming for stable matching
+lp_matches = stable_matching_lp(students, schools)
+
 ```
 
 ## Algorithms Implemented
@@ -66,6 +73,19 @@ The Boston Mechanism is a direct mechanism for matching students to schools, whe
 
 The Top Trading Cycles (TTC) mechanism is an efficient and strategy-proof algorithm for allocating resources. It works by allowing participants to express their preferences and trade until a stable allocation is achieved.
 
+### Linear Programming Algorithms
+
+## Stable Matching
+
+The Stable Matching algorithm based on linear programming finds a solution where no pair of participants prefer each other over their assigned matches. It is often used for problems such as marriage matching and student-school assignment.
+
+## Egalitarian Stable Matching
+
+The Egalitarian Stable Matching algorithm, implemented using linear programming, finds a stable matching that minimizes the total dissatisfaction (or rank) across all participants. It seeks to produce the most "fair" matching.
+
+## Nash Welfare Stable Matching
+
+The Nash Welfare Stable Matching algorithm aims to maximize the product of the utilities (or satisfaction) of all participants in the matching. It is a fairness criterion that balances equity and efficiency in matching outcomes.
 
 ## Contributing
 
