@@ -91,6 +91,34 @@ The Random Serial Dictatorship (RSD) is a variation of the Serial Dictatorship m
 
 The Stable Matching algorithm based on linear programming finds a solution where no pair of participants prefer each other over their assigned matches. It is often used for problems such as marriage matching and student-school assignment.
 
+To find a stable matching using linear programming, we solve the following LP formulation:
+
+$$
+\text{Maximize} \sum_{i,j} x_{ij} u_{ij}
+$$
+
+subject to the constraints:
+
+1. Each participant is assigned to at most one match:
+
+$$
+\sum_{j} x_{ij} \leq 1 \quad \forall i
+$$
+
+2. Each match is stable, meaning that there is no blocking pair $(i,j)$ such that both would prefer to be matched with each other over their current assignments:
+
+$$
+x_{ij} + x_{ji} \leq 1 \quad \forall (i,j)
+$$
+
+3. All assignment variables are binary:
+
+$$
+x_{ij} \in \{0, 1\}
+$$
+
+Here, $x_{ij}$ is a binary variable indicating whether participant $i$ is matched to participant $j$, and $u_{ij}$ represents the utility or preference of participant $i$ for participant $j$.
+
 #### Egalitarian Stable Matching
 
 The Egalitarian Stable Matching algorithm, implemented using linear programming, finds a stable matching that minimizes the total dissatisfaction (or rank) across all participants. It seeks to produce the most "fair" matching.
