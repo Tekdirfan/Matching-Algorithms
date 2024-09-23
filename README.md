@@ -10,9 +10,8 @@ This project implements various matching algorithms, including the Deferred Acce
   - [Deferred Acceptance](#deferred-acceptance)
   - [Boston Mechanism](#boston-mechanism)
   - [Top Trading Cycles (TTC)](#top-trading-cycles-ttc)
-  - [Serial Dictatorship Algorithms](#serial-dictatorship-algorithms)
-    - [Serial Dictatorship] (#serial-dictatorship)
-    - [Random Serial Dictatorship] (#random-serial-dictatorship)
+  - [Serial Dictatorship](#serial-dictatorship)
+  - [Random Serial Dictatorship] (#random-serial-dictatorship)
   - [Linear Programming Algorithms](#linear-programming-algorithms)
     - [Stable Matching](#stable-matching-lp)
     - [Egalitarian Stable Matching](#egalitarian-stable-matching)
@@ -78,11 +77,11 @@ The Boston Mechanism is a direct mechanism for matching students to schools, whe
 
 The Top Trading Cycles (TTC) mechanism is an efficient and strategy-proof algorithm for allocating resources. It works by allowing participants to express their preferences and trade until a stable allocation is achieved.
 
-#### Serial Dictatorship
+### Serial Dictatorship
 
 The Serial Dictatorship mechanism is a priority-based mechanism where participants choose their preferred options one after another based on a predetermined priority order. It is often used in school choice and housing allocation problems.
 
-#### Random Serial Dictatorship
+### Random Serial Dictatorship
 
 The Random Serial Dictatorship (RSD) is a variation of the Serial Dictatorship mechanism where the order of participants is determined randomly. It is used to ensure fairness in assigning preferences, often in situations where no pre-existing priority is available.
 
