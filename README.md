@@ -75,7 +75,7 @@ The Top Trading Cycles (TTC) mechanism is an efficient and strategy-proof algori
 
 ### Linear Programming Algorithms
 
-## Stable Matching
+## Stable Matching LP
 
 The Stable Matching algorithm based on linear programming finds a solution where no pair of participants prefer each other over their assigned matches. It is often used for problems such as marriage matching and student-school assignment.
 
