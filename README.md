@@ -27,6 +27,8 @@ git clone https://github.com/yourusername/matching_algorithms.git
 cd matching_algorithms
 pip install .
 
+```
+
 ## Usage
 
 Here’s a quick example of how to use the matching algorithms in your Python code:
@@ -47,6 +49,7 @@ boston_matches = boston_mechanism(students, schools)
 # Using the Top Trading Cycles (TTC) mechanism
 ttc_matches = ttc(students, schools)
 
+```
 
 ## Algorithms Implemented
 
