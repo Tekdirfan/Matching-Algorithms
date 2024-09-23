@@ -77,25 +77,26 @@ The Top Trading Cycles (TTC) mechanism is an efficient and strategy-proof algori
 
 ### Linear Programming Algorithms
 
-## Stable Matching LP
+#### Stable Matching LP
 
 The Stable Matching algorithm based on linear programming finds a solution where no pair of participants prefer each other over their assigned matches. It is often used for problems such as marriage matching and student-school assignment.
 
-## Egalitarian Stable Matching
+#### Egalitarian Stable Matching
 
 The Egalitarian Stable Matching algorithm, implemented using linear programming, finds a stable matching that minimizes the total dissatisfaction (or rank) across all participants. It seeks to produce the most "fair" matching.
 
-## Nash Welfare Stable Matching
+#### Nash Welfare Stable Matching
 
 The Nash Welfare Stable Matching algorithm aims to maximize the product of the utilities (or satisfaction) of all participants in the matching. It is a fairness criterion that balances equity and efficiency in matching outcomes.
 
-## Sex-Equal Stable Matching
+#### Sex-Equal Stable Matching
 
 The Sex-Equal Stable Matching algorithm seeks to balance the satisfaction between two groups (e.g., men and women) in the matching process. It ensures that both sides have similar outcomes in terms of ranks and preferences.
 
-## Utilitarian Stable Matching
+#### Utilitarian Stable Matching
 
 The Utilitarian Stable Matching algorithm focuses on maximizing the total utility (or satisfaction) of all participants. It seeks to produce a socially optimal matching where the sum of everyone's satisfaction is maximized.
+
 
 ## Contributing
 
