@@ -1,0 +1,10 @@
+LICENSE
+README.md
+setup.py
+matching_algorithms/__init__.py
+matching_algorithms/main.py
+matching_algorithms.egg-info/PKG-INFO
+matching_algorithms.egg-info/SOURCES.txt
+matching_algorithms.egg-info/dependency_links.txt
+matching_algorithms.egg-info/requires.txt
+matching_algorithms.egg-info/top_level.txt
