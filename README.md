@@ -15,12 +15,17 @@ This project implements a variety of matching algorithms, including the Deferred
   - [Top Trading Cycles (TTC)](#top-trading-cycles-ttc)
   - [Serial Dictatorship](#serial-dictatorship)
   - [Random Serial Dictatorship](#random-serial-dictatorship)
-  - [Linear Programming Algorithms](#linear-programming-algorithms)
+  - [Linear Programming Algorithms with Stability Constraint](#linear-programming-algorithms-with-stability-constraint)
     - [Stable Matching LP](#stable-matching-lp)
     - [Egalitarian Stable Matching](#egalitarian-stable-matching)
     - [Nash Welfare Stable Matching](#nash-welfare-stable-matching)
     - [Sex-Equal Stable Matching](#sex-equal-stable-matching)
     - [Utilitarian Stable Matching](#utilitarian-stable-matching)
+  -[Linear Programming Algorithms without Stability Constraint](#linear-programming-algorithms-without-stability-constraint)
+    - [Egalitarian Matching](#egalitarian-matching)
+    - [Nash Welfare Matching](#nash-welfare-matching)
+    - [Sex-Equal Matching](#sex-equal-matching)
+    - [Utilitarian Matching](#utilitarian-matching)
 - [Contributing](#contributing)
 - [License](#license)
 
@@ -168,7 +173,7 @@ The Random Serial Dictatorship (RSD) mechanism is a variation of the Serial Dict
 The RSD mechanism is particularly effective in educational contexts, such as school assignments, where fairness and transparency in the selection process are essential.
 
 
-### Linear Programming Algorithms
+### Linear Programming Algorithms with Stability Constraint
 
 #### Stable Matching LP
 
@@ -217,6 +222,24 @@ The Sex-Equal Stable Matching algorithm seeks to balance the satisfaction betwee
 #### Utilitarian Stable Matching
 
 The Utilitarian Stable Matching algorithm focuses on maximizing the total utility (or satisfaction) of all participants. It seeks to produce a socially optimal matching where the sum of everyone's satisfaction is maximized.
+
+### Linear Programming Algorithms without Stability Constraint
+
+#### Egalitarian  Matching
+
+The Egalitarian Matching algorithm, implemented using linear programming, finds a matching that minimizes the total dissatisfaction (or rank) across all participants. It seeks to produce the most "fair" matching without stability constraint.
+
+#### Nash Welfare Matching
+
+The Nash Welfare Matching algorithm aims to maximize the product of the utilities (or satisfaction) of all participants in the matching. It is a fairness criterion that balances equity and efficiency in matching outcomes without stability constraint.
+
+#### Sex-Equal Matching
+
+The Sex-Equal Matching algorithm seeks to balance the satisfaction between two groups (e.g., men and women) in the matching process. It ensures that both sides have similar outcomes in terms of ranks and preferences without stability constraint.
+
+#### Utilitarian Stable Matching
+
+The Utilitarian Matching algorithm focuses on maximizing the total utility (or satisfaction) of all participants. It seeks to produce a socially optimal matching where the sum of everyone's satisfaction is maximized without stability constraint.
 
 
 ## Contributing
