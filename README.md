@@ -16,14 +16,14 @@ This project implements a variety of matching algorithms, including the Deferred
   - [Serial Dictatorship](#serial-dictatorship)
   - [Random Serial Dictatorship](#random-serial-dictatorship)
   - [Linear Programming Algorithms with Stability Constraint](#linear-programming-algorithms-with-stability-constraint)
-    - [Stable Matching LP](#stable-matching-lp)
+    - [Random Stable Matching](#random-stable-matching)
     - [Egalitarian Stable Matching](#egalitarian-stable-matching)
-    - [Nash Welfare Stable Matching](#nash-welfare-stable-matching)
+    - [Nash Stable Matching](#nash-welfare-stable-matching)
     - [Sex-Equal Stable Matching](#sex-equal-stable-matching)
     - [Utilitarian Stable Matching](#utilitarian-stable-matching)
   - [Linear Programming Algorithms without Stability Constraint](#linear-programming-algorithms-without-stability-constraint)
     - [Egalitarian Matching](#egalitarian-matching)
-    - [Nash Welfare Matching](#nash-welfare-matching)
+    - [Nash Matching](#nash-welfare-matching)
     - [Sex-Equal Matching](#sex-equal-matching)
     - [Utilitarian Matching](#utilitarian-matching)
 - [Contributing](#contributing)
@@ -175,7 +175,7 @@ The RSD mechanism is particularly effective in educational contexts, such as sch
 
 ### Linear Programming Algorithms with Stability Constraint
 
-#### Stable Matching LP
+#### Random Stable Matching 
 
 The Stable Matching algorithm based on linear programming finds a solution where no pair of participants prefer each other over their assigned matches. It is often used for problems such as marriage matching and student-school assignment.
 
@@ -211,7 +211,7 @@ Here, $x_{ij}$ is a binary variable indicating whether participant $i$ is matche
 
 The Egalitarian Stable Matching algorithm, implemented using linear programming, finds a stable matching that minimizes the total dissatisfaction (or rank) across all participants. It seeks to produce the most "fair" matching.
 
-#### Nash Welfare Stable Matching
+#### Nash Stable Matching
 
 The Nash Welfare Stable Matching algorithm aims to maximize the product of the utilities (or satisfaction) of all participants in the matching. It is a fairness criterion that balances equity and efficiency in matching outcomes.
 
@@ -229,9 +229,9 @@ The Utilitarian Stable Matching algorithm focuses on maximizing the total utilit
 
 The Egalitarian Matching algorithm, implemented using linear programming, finds a matching that minimizes the total dissatisfaction (or rank) across all participants. It seeks to produce the most "fair" matching without stability constraint.
 
-#### Nash Welfare Matching
+#### Nash Matching
 
-The Nash Welfare Matching algorithm aims to maximize the product of the utilities (or satisfaction) of all participants in the matching. It is a fairness criterion that balances equity and efficiency in matching outcomes without stability constraint.
+The Nash Matching algorithm aims to maximize the product of the utilities (or satisfaction) of all participants in the matching. It is a fairness criterion that balances equity and efficiency in matching outcomes without stability constraint.
 
 #### Sex-Equal Matching
 
