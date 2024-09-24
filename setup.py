@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='matching_algorithms',
-    version='0.1.0',
+    version='0.1.1',
     author='Irfan Tekdir',
     author_email='irfan.tekdir@gmail.com',
     description='A collection of matching algorithms for applications like school choice, job assignments and marriage markets.',
