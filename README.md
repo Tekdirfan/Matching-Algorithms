@@ -1,6 +1,6 @@
 # Matching Algorithms
 
-This project implements a variety of matching algorithms, including the Deferred Acceptance algorithm, the Boston Mechanism, the Top Trading Cycles (TTC) mechanism, and several linear programming approaches. These algorithms are widely applicable in various domains such as school admissions, organ allocation, job assignments, and resource allocation problems. Their effectiveness in creating stable and efficient matchings makes them valuable tools in economics, operations research, and decision-making processes.
+This project implements a variety of matching algorithms, including the Deferred Acceptance algorithm, the Boston Mechanism, the Top Trading Cycles (TTC) mechanism, and several linear programming approaches for matching problems. These algorithms are widely applicable in various domains such as school admissions, organ allocation, job assignments, and resource allocation problems. Their effectiveness in creating stable and efficient matchings makes them valuable tools in economics, operations research, and decision-making processes.
 
 
 ## Table of Contents
