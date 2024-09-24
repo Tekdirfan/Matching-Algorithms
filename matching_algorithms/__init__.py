@@ -1,1 +1,1 @@
-from matching_algorithms.main import deferred_acceptance
+from matching_algorithms.main import *
