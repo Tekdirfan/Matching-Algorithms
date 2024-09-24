@@ -66,6 +66,77 @@ def deferred_acceptance(men_preferences, women_preferences, men_propose=True):
 ------------------------------------------------------------------------------------------------------------
 ##School Choice Deferred Acceptance
 
+def school_choice_da(schools, students, student_proposing=True):
+    """
+    Implements the deferred acceptance algorithm for school choice.
+    
+    Args:
+    schools (dict): A dictionary where keys are school names and values are dictionaries containing:
+                    'preferences': list of student names in order of preference
+                    'quota': integer representing the school's capacity
+    students (dict): A dictionary where keys are student names and values are lists of school names in order of preference
+    student_proposing (bool): If True, students propose to schools. If False, schools propose to students. Default is True.
+    
+    Returns:
+    dict: A dictionary representing the matching, where keys are school names and values are lists of assigned students
+    """
+    
+    if student_proposing:
+        proposers = list(students.keys())
+        proposer_preferences = students
+        receivers = list(schools.keys())
+        receiver_preferences = {school: schools[school]['preferences'] for school in schools}
+        receiver_quotas = {school: schools[school]['quota'] for school in schools}
+    else:
+        proposers = list(schools.keys())
+        proposer_preferences = {school: schools[school]['preferences'] for school in schools}
+        receivers = list(students.keys())
+        receiver_preferences = students
+        receiver_quotas = {school: schools[school]['quota'] for school in schools}
+    
+    # Initialize all proposers as unmatched and all receivers as empty
+    unmatched_proposers = proposers.copy()
+    assignments = {receiver: [] for receiver in receivers}
+    
+    while unmatched_proposers:
+        proposer = unmatched_proposers.pop(0)
+        proposer_prefs = proposer_preferences[proposer]
+        
+        for receiver in proposer_prefs:
+            receiver_prefs = receiver_preferences[receiver]
+            current_assignments = assignments[receiver]
+            
+            if student_proposing:
+                quota = receiver_quotas[receiver]
+            else:
+                quota = 1  # When schools propose, each student can only be assigned to one school
+            
+            if len(current_assignments) < quota:
+                # Receiver has capacity, assign proposer
+                assignments[receiver].append(proposer)
+                break
+            else:
+                # Receiver is at capacity, check if proposer is preferred over any current assignment
+                worst_assigned = min(current_assignments, key=lambda x: receiver_prefs.index(x))
+                if receiver_prefs.index(proposer) < receiver_prefs.index(worst_assigned):
+                    # Replace worst assigned with current proposer
+                    assignments[receiver].remove(worst_assigned)
+                    assignments[receiver].append(proposer)
+                    unmatched_proposers.append(worst_assigned)
+                    break
+        else:
+            # Proposer couldn't be assigned to any receiver in their preference list
+            unmatched_proposers.append(proposer)
+    
+    if not student_proposing:
+        # Invert the assignments so that schools are keys and students are values
+        inverted_assignments = {school: [] for school in schools}
+        for student, assigned_schools in assignments.items():
+            for school in assigned_schools:
+                inverted_assignments[school].append(student)
+        assignments = inverted_assignments
+    
+    return assignments
 
 
 ------------------------------------------------------------------------------------------------------------
