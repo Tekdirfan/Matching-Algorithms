@@ -34,7 +34,7 @@ pip install matching_algorithms
 Alternatively, you can clone the repository and install it manually:
 
 ```bash
-git clone https://github.com/yourusername/matching_algorithms.git
+git clone https://github.com/Tekdirfan/Matching-Algorithms.git
 cd matching_algorithms
 pip install .
 
