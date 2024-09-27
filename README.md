@@ -7,9 +7,8 @@ This project implements a variety of matching algorithms, including the Deferred
 
 - [Installation](#installation)
 - [Algorithms Implemented](#algorithms-implemented)
-  - [Deferred Acceptance](#deferred-acceptance)
-    - [Marriage Market Deferred Acceptance](#marriage-market-deferred-acceptance)
-    - [School Choice Deferred Acceptance](#school-choice-deferred-acceptance)
+  - [Marriage Market Deferred Acceptance](#marriage-market-deferred-acceptance)
+  - [School Choice Deferred Acceptance](#school-choice-deferred-acceptance)
   - [Boston Mechanism](#boston-mechanism)
   - [Top Trading Cycles (TTC)](#top-trading-cycles-ttc)
   - [Serial Dictatorship](#serial-dictatorship)
