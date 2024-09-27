@@ -195,8 +195,9 @@ def top_trading_cycles(students, schools):
     Args:
     students (dict): A dictionary where keys are student names and values are lists of school preferences.
     schools (dict): A dictionary where keys are school names and values are dictionaries containing:
+                    'priorities': list of student names in order of preference
                     'capacity': integer representing the school's capacity
-                    'preferences': list of student names in order of preference
+                    
     
     Returns:
     dict: A dictionary representing the matching, where keys are student names and values are assigned schools.
@@ -220,7 +221,7 @@ def top_trading_cycles(students, schools):
                     break
         
         for school in schools:
-            for student in schools[school]['preferences']:
+            for student in schools[school]['priorities']:
                 if student in unassigned_students:
                     school_pointers[school].append(student)
                     if len(school_pointers[school]) == school_capacities[school]:
@@ -756,9 +757,4 @@ def is_stable(matching, men_preferences, women_preferences):
     
     # If we've checked all pairs and found no instabilities, the matching is stable
     return True
-
-
-
-
-
 
