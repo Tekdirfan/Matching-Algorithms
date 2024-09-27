@@ -376,6 +376,8 @@ for student, school in matching.items():
     print(f"{student} -> {school if school else 'Unassigned'}")
 ```
 
+## Linear Programming Algorithms with Stability Constraint
+
 # Stable Matching via Linear Programming
 
 ## Overview
