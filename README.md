@@ -23,7 +23,6 @@ This project implements a variety of matching algorithms, including the Deferred
   - [Linear Programming Algorithms without Stability Constraint](#linear-programming-algorithms-without-stability-constraint)
     - [Egalitarian Matching](#egalitarian-matching)
     - [Nash Matching](#nash-welfare-matching)
-    - [Sex-Equal Matching](#sex-equal-matching)
     - [Utilitarian Matching](#utilitarian-matching)
 - [Contributing](#contributing)
 - [License](#license)
