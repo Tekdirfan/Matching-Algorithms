@@ -16,7 +16,7 @@ This project implements a variety of matching algorithms, including the Deferred
   - [Linear Programming Algorithms with Stability Constraint](#linear-programming-algorithms-with-stability-constraint)
     - [Stable Matching via Linear Programming](#stable-matching-via-linear-programming)
     - [Egalitarian Stable Matching](#egalitarian-stable-matching)
-    - [Nash Stable Matching](#nash-welfare-stable-matching)
+    - [Nash Stable Matching](#nash-stable-matching)
     - [Utilitarian Stable Matching](#utilitarian-stable-matching)
   - [Linear Programming Algorithms without Stability Constraint](#linear-programming-algorithms-without-stability-constraint)
     - [Egalitarian Matching](#egalitarian-matching)
