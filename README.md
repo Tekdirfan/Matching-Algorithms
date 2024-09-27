@@ -886,23 +886,23 @@ for man, woman in matching.items():
 
 ## Helper Functions
 
-### Generate Instance
+# Generate Instance
 
 This helper function generates instances of matching markets. The function `generate_instance` can create preferences or valuations for both marriage markets and school choice problems, with options for cardinal or ordinal preferences.
 
-#### Parameters
+## Parameters
 
 - `num_agents` (int): Number of agents on each side of the market (or number of students for school choice)
 - `is_marriage_market` (bool): If True, generates for marriage market. If False, generates for school choice.
 - `is_cardinal` (bool): If True, generates cardinal valuations. If False, generates ordinal preferences.
 
-#### Returns
+## Returns
 
 - For marriage market: A tuple of two dictionaries (men_preferences, women_preferences)
 - For school choice: A tuple of two dictionaries (student_preferences, school_data)
   - `school_data` contains both priorities and capacities for each school
 
-#### Usage
+## Usage
 
 1. Generate preferences for a marriage market with ordinal preferences:
 ```python
