@@ -68,11 +68,6 @@ The algorithm proceeds in rounds:
 - Efficiency: The algorithm terminates in at most n^2 rounds, where n is the number of participants on each side
 
 ## Usage
-
-To use the Marriage Market Deferred Acceptance algorithm, follow these steps:
-
-1. Import the function:
-
 ```python
 from matching_algorithms import deferred_acceptance
 
@@ -428,8 +423,6 @@ The algorithm is implemented in Python using the PuLP library for linear program
 
 ## Usage
 
-To use the algorithm, provide dictionaries representing the preferences of men and women. The output will be a dictionary indicating the matched pairs.
-
 ```python
 from matching_algorithms import stable_matching_lp
 men_prefs = {
@@ -501,8 +494,6 @@ This formulation minimizes the sum of ranks while ensuring that each participant
 The algorithm has been implemented in Python using the PuLP library for linear programming. You can use this implementation to find egalitarian stable matchings based on given preferences.
 
 ## Usage
-
-To use the algorithm, provide dictionaries representing the preferences of men and women. The output will be a dictionary indicating the matched pairs.
 
 ```python
 from matching_algorithms import egalitarian_stable_matching
@@ -581,9 +572,6 @@ This formulation maximizes the product of valuations (Nash social welfare) while
 The algorithm is implemented in Python using the PuLP library for linear programming. The logarithmic transformation is used to convert the product maximization into a sum maximization, which can be solved using standard linear programming techniques.
 
 ## Usage
-
-To use the algorithm, provide dictionaries representing the valuations of participants for each other. The output will be a dictionary indicating the matched pairs.
-
 ```python
 from matching_algorithms import nash_stable_matching
 
@@ -654,9 +642,6 @@ This formulation maximizes the sum of valuations while ensuring that each partic
 The algorithm has been implemented in Python using the PuLP library for linear programming. You can use this implementation to find utilitarian stable matchings based on given valuations.
 
 ## Usage
-
-To use the algorithm, provide dictionaries representing the valuations of men and women for each other. The output will be a dictionary indicating the matched pairs.
-
 ```python
 from matching_algorithms import utilitarian_stable_matching
 
@@ -793,7 +778,6 @@ Where:
 
 The algorithm is implemented in Python using the PuLP library for linear programming. The logarithmic transformation allows us to solve this as a linear programming problem. The key features of the implementation include:
 
-- Use of binary variables for matching and continuous variables for log utilities.
 - Logarithmic utility constraints to handle the product maximization.
 - No stability constraints, focusing solely on maximizing the Nash social welfare.
 
