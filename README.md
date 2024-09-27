@@ -74,7 +74,7 @@ To use the Marriage Market Deferred Acceptance algorithm, follow these steps:
 1. Import the function:
 
 ```python
-from marriage_market import deferred_acceptance
+from matching_algorithms import deferred_acceptance
 
 men_preferences = {
     'M1': ['W1', 'W2', 'W3'],
@@ -121,7 +121,8 @@ The **School Choice Deferred Acceptance** algorithm adapts the classic Deferred 
 
 ## Usage
 ```python
-# Example usage
+from matching_algorithms import school_choice_da
+
 students = {
     'Alice': ['School1', 'School2', 'School3'],
     'Bob': ['School2', 'School1', 'School3'],
@@ -174,7 +175,8 @@ The mechanism works as follows:
 ## Usage
 
 ```python
-# Example usage:
+
+from matching_algorithms import boston_mechanism
 students = {
     'Alice': ['School1', 'School2', 'School3'],
     'Bob': ['School2', 'School1', 'School3'],
@@ -244,7 +246,8 @@ Return the final assignment
 ## Usage
 
 ```python
-# Example usage:
+
+from matching_algorithms import top_trading_cycles
 students = {
     'Alice': ['School1', 'School2', 'School3'],
     'Bob': ['School2', 'School1', 'School3'],
@@ -298,6 +301,8 @@ The Serial Dictatorship mechanism is a priority-based allocation method where pa
 
 ## Usage
 ```python
+from matching_algorithms import serial_dictatorship
+
 # Define student preferences
 students = {
     'Alice': ['School1', 'School2', 'School3'],
@@ -347,6 +352,7 @@ The Random Serial Dictatorship (RSD) mechanism is a variation of the Serial Dict
 
 ## Usage
 ```python
+from matching_algorithms import random_serial_dictatorship
 # Define student preferences
 students = {
     'Alice': ['School1', 'School2', 'School3'],
@@ -423,6 +429,7 @@ The algorithm is implemented in Python using the PuLP library for linear program
 To use the algorithm, provide dictionaries representing the preferences of men and women. The output will be a dictionary indicating the matched pairs.
 
 ```python
+from matching_algorithms import stable_matching_lp
 men_prefs = {
     'M1': ['W1', 'W2', 'W3'],
     'M2': ['W2', 'W1', 'W3'],
@@ -496,6 +503,7 @@ The algorithm has been implemented in Python using the PuLP library for linear p
 To use the algorithm, provide dictionaries representing the preferences of men and women. The output will be a dictionary indicating the matched pairs.
 
 ```python
+from matching_algorithms import egalitarian_stable_matching
 men_prefs = {
     'M1': ['W1', 'W2', 'W3'],
     'M2': ['W2', 'W1', 'W3'],
@@ -575,6 +583,8 @@ The algorithm is implemented in Python using the PuLP library for linear program
 To use the algorithm, provide dictionaries representing the valuations of participants for each other. The output will be a dictionary indicating the matched pairs.
 
 ```python
+from matching_algorithms import nash_stable_matching
+
 men_valuations = {
     'M1': {'W1': 10, 'W2': 5, 'W3': 3},
     'M2': {'W1': 4, 'W2': 8, 'W3': 6},
@@ -646,6 +656,8 @@ The algorithm has been implemented in Python using the PuLP library for linear p
 To use the algorithm, provide dictionaries representing the valuations of men and women for each other. The output will be a dictionary indicating the matched pairs.
 
 ```python
+from matching_algorithms import utilitarian_stable_matching
+
 men_valuations = {
     'M1': {'W1': 10, 'W2': 5, 'W3': 3},
     'M2': {'W1': 4, 'W2': 8, 'W3': 6},
@@ -711,9 +723,9 @@ The algorithm is implemented in Python using the PuLP library for linear program
 
 ## Usage
 
-To use the algorithm, provide dictionaries representing the preferences of participants. The output will be a dictionary indicating the matched pairs.
-
 ```python
+from matching_algorithms import egalitarian_matching
+
 men_prefs = {
     'M1': ['W1', 'W2', 'W3'],
     'M2': ['W2', 'W1', 'W3'],
@@ -785,9 +797,8 @@ The algorithm is implemented in Python using the PuLP library for linear program
 
 ## Usage
 
-To use the algorithm, provide dictionaries representing the valuations of participants for each other. The output will be a dictionary indicating the matched pairs.
-
 ```python
+from matching_algorithms import nash_matching
 
 men_valuations = {
     'M1': {'W1': 10, 'W2': 5, 'W3': 3},
@@ -851,9 +862,8 @@ The algorithm is implemented in Python using the PuLP library for linear program
 
 ## Usage
 
-To use the algorithm, provide dictionaries representing the valuations of participants for each other. The output will be a dictionary indicating the matched pairs.
-
 ```python
+from matching_algorithms import utilitarian_matching
 men_valuations = {
     'M1': {'W1': 10, 'W2': 5, 'W3': 3},
     'M2': {'W1': 4, 'W2': 8, 'W3': 6},
