@@ -208,8 +208,16 @@ The Top Trading Cycles (TTC) algorithm is an efficient and strategy-proof mechan
 4. Remove these students and reduce the capacity of the schools by the number of students assigned to them.
 5. Repeat steps 1-4 until all students are assigned or no more cycles can be formed.
 
-
 ## Characteristics
+
+- Strategy-proof: Agents have no incentive to misrepresent their preferences[1].
+- Pareto efficient: Always produces a Pareto-optimal matching[1].
+- Individually rational: When agents have initial endowments, no agent is made worse off than their initial allocation[1].
+- Core selecting: The resulting allocation is always in the core of the housing market[1].
+- Respects improvement: If an agent's priority improves at a school, they are guaranteed to be no worse off[4].
+- Can handle indifferences in preferences[4].
+- More complex to implement than simpler mechanisms like Serial Dictatorship.
+- May not always produce a stable matching in the two-sided sense.
 
 ## Usage
 
