@@ -257,18 +257,84 @@ def top_trading_cycles(students, schools):
 
 #------------------------------------------------------------------------------------------------------------
 ##Serial Dictatorship
-
-
-
-
-
+def serial_dictatorship(students, schools, student_order):
+    """
+    Implements the Serial Dictatorship algorithm for school choice.
+    
+    Args:
+    students (dict): A dictionary where keys are student names and values are lists of school preferences.
+    schools (dict): A dictionary where keys are school names and values are their capacities.
+    student_order (list): List of student names in the order they should choose schools.
+    
+    Returns:
+    dict: A dictionary representing the matching, where keys are student names and values are assigned schools.
+    """
+        
+    # Initialize remaining capacities and matching
+    remaining_capacity = schools.copy()
+    matching = {}
+    
+    print("Student order:")
+    for i, student in enumerate(student_order, 1):
+        print(f"{i}. {student}")
+    
+    print("\nAssignment process:")
+    # Let students choose in the given order
+    for student in student_order:
+        for school in students[student]:
+            if remaining_capacity[school] > 0:
+                matching[student] = school
+                remaining_capacity[school] -= 1
+                print(f"{student} chooses {school}")
+                break
+        else:
+            # If no preferred school has capacity, assign to null school
+            matching[student] = None
+            print(f"{student} remains unassigned")
+    
+    return matching
 
 #------------------------------------------------------------------------------------------------------------
 ##Random Serial Dictatorship
-
-
-
-
+def random_serial_dictatorship(students, schools):
+    """
+    Implements the Random Serial Dictatorship algorithm for school choice.
+    
+    Args:
+    students (dict): A dictionary where keys are student names and values are lists of school preferences.
+    schools (dict): A dictionary where keys are school names and values are their capacities.
+    
+    Returns:
+    dict: A dictionary representing the matching, where keys are student names and values are assigned schools.
+    """
+    
+    # Create a random ordering of students
+    student_order = list(students.keys())
+    random.shuffle(student_order)
+    
+    # Initialize remaining capacities and matching
+    remaining_capacity = schools.copy()
+    matching = {}
+    
+    print("Random student order:")
+    for i, student in enumerate(student_order, 1):
+        print(f"{i}. {student}")
+    
+    print("\nAssignment process:")
+    # Let students choose in the random order
+    for student in student_order:
+        for school in students[student]:
+            if remaining_capacity[school] > 0:
+                matching[student] = school
+                remaining_capacity[school] -= 1
+                print(f"{student} chooses {school}")
+                break
+        else:
+            # If no preferred school has capacity, assign to null school
+            matching[student] = None
+            print(f"{student} remains unassigned")
+    
+    return matching
 
 #------------------------------------------------------------------------------------------------------------
 ##Linear Programming Algorithms with Stability Constraints
