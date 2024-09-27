@@ -67,6 +67,16 @@ The algorithm proceeds in rounds:
 - Truthfulness: It's a dominant strategy for the proposing side to reveal their true preferences. However, the receiving side may have incentives to misrepresent their preferences.
 - Efficiency: The algorithm terminates in at most n^2 rounds, where n is the number of participants on each side
 
+## Parameters
+
+- `men_preferences` (dict): A dictionary where keys are men and values are lists of women in order of preference.
+- `women_preferences` (dict): A dictionary where keys are women and values are lists of men in order of preference.
+- `men_propose` (bool, optional): If True, men propose to women. If False, women propose to men. Default is True.
+
+## Returns
+
+- `dict`: A dictionary representing the stable matching, where keys are proposers and values are their matched partners.
+
 ## Usage
 ```python
 from matching_algorithms import deferred_acceptance
@@ -113,6 +123,27 @@ The **School Choice Deferred Acceptance** algorithm adapts the classic Deferred 
 - Student-optimal: When students propose, it produces the best stable matching for students.
 - Favors truthful revelation of preferences over strategic behavior.
 - Not necessarily Pareto efficient among students (though it is Pareto efficient among stable matchings)
+
+## Parameters
+
+- `schools` : dict
+  - A dictionary where keys are school names and values are dictionaries containing:
+    - `'preferences'` : list
+      - List of student names in order of preference
+    - `'quota'` : int
+      - Integer representing the school's capacity
+
+- `students` : dict
+  - A dictionary where keys are student names and values are lists of school names in order of preference
+
+- `student_proposing` : bool, optional
+  - If True, students propose to schools. If False, schools propose to students.
+  - Default is True.
+
+## Returns
+
+- dict
+  - A dictionary representing the matching, where keys are school names and values are lists of assigned students
 
 ## Usage
 ```python
@@ -166,6 +197,26 @@ The mechanism works as follows:
 - Favors students who rank popular schools highly.
 - Simple to understand and implement.
 - May lead to unstable matchings.
+
+## Parameters
+
+- `students` : dict
+  - A dictionary where keys are student names and values are lists of school preferences.
+  - Example: `{'Alice': ['School1', 'School2'], 'Bob': ['School2', 'School1']}`
+
+- `schools` : dict
+  - A dictionary where keys are school names and values are dictionaries containing:
+    - `capacity` : int
+      - Integer representing the school's capacity
+    - `priorities` : list
+      - List of student names in order of priority
+  - Example: `{'School1': {'capacity': 2, 'priorities': ['Bob', 'Alice']}, 'School2': {'capacity': 1, 'priorities': ['Alice', 'Bob']}}`
+
+## Returns
+
+- dict
+  - A dictionary representing the matching, where keys are student names and values are assigned schools.
+  - Example: `{'Alice': 'School1', 'Bob': 'School2'}`
 
 ## Usage
 
@@ -238,6 +289,38 @@ Return the final assignment
 - Respects improvement: If an agent's priority improves at a school, they are guaranteed to be no worse off.
 - May not always produce a stable matching in the two-sided sense.
 
+## Parameters
+
+- `students` : dict
+  - A dictionary where keys are student names and values are lists of school preferences.
+  - Example: `{'Alice': ['School1', 'School2'], 'Bob': ['School2', 'School1']}`
+
+- `schools` : dict
+  - A dictionary where keys are school names and values are dictionaries containing:
+    - `priorities` : list
+      - A list of student names in order of preference.
+    - `capacity` : int
+      - An integer representing the school's capacity.
+  - Example: 
+    ```python
+    {
+      'School1': {
+        'priorities': ['Bob', 'Alice'],
+        'capacity': 1
+      },
+      'School2': {
+        'priorities': ['Alice', 'Bob'],
+        'capacity': 1
+      }
+    }
+    ```
+
+## Returns
+
+- dict
+  - A dictionary representing the matching, where keys are student names and values are assigned schools.
+  - Example: `{'Alice': 'School1', 'Bob': 'School2'}`
+
 ## Usage
 
 ```python
@@ -292,7 +375,19 @@ The Serial Dictatorship mechanism is a priority-based allocation method where pa
 - Deterministic: Given a fixed priority order, the outcome is always the same for the same preferences[1].
 - May lead to unfair outcomes if the priority order is not carefully chosen or justified.
 
+## Parameters
 
+- `students` : dict
+  - A dictionary where keys are student names and values are lists of school preferences.
+- `schools` : dict
+  - A dictionary where keys are school names and values are their capacities.
+- `student_order` : list
+  - List of student names in the order they should choose schools.
+
+## Returns
+
+- dict
+  - A dictionary representing the matching, where keys are student names and values are assigned schools.
 
 ## Usage
 ```python
@@ -344,6 +439,18 @@ The Random Serial Dictatorship (RSD) mechanism is a variation of the Serial Dict
 - Ex-post Pareto efficient: The final allocation is always Pareto optimal.
 - Fair ex-ante: All agents have an equal chance of being in any position in the selection order.
 - Widely used in practice: Common in house allocation problems, such as allocating dormitory rooms to students.
+
+## Parameters
+
+- `students` : dict
+  - A dictionary where keys are student names and values are lists of school preferences.
+- `schools` : dict
+  - A dictionary where keys are school names and values are their capacities.
+
+## Returns
+
+- dict
+  - A dictionary representing the matching, where keys are student names and values are assigned schools.
 
 ## Usage
 ```python
@@ -421,6 +528,15 @@ Where:
 
 The algorithm is implemented in Python using the PuLP library for linear programming. It sets up the linear program based on the preference lists of men and women, solves it, and extracts the stable matching from the solution.
 
+## Parameters
+
+- `men_prefs` (dict): A dictionary where keys are men and values are lists of women in order of preference.
+- `women_prefs` (dict): A dictionary where keys are women and values are lists of men in order of preference.
+
+## Returns
+
+- `dict`: A dictionary representing the stable matching, where keys are men and values are their matched women.
+
 ## Usage
 
 ```python
@@ -492,6 +608,7 @@ This formulation minimizes the sum of ranks while ensuring that each participant
 ## Implementation
 
 The algorithm has been implemented in Python using the PuLP library for linear programming. You can use this implementation to find egalitarian stable matchings based on given preferences.
+
 
 ## Usage
 
@@ -571,6 +688,17 @@ This formulation maximizes the product of valuations (Nash social welfare) while
 
 The algorithm is implemented in Python using the PuLP library for linear programming. The logarithmic transformation is used to convert the product maximization into a sum maximization, which can be solved using standard linear programming techniques.
 
+## Parameters
+
+- `men_valuations` (dict): A dictionary where keys are men and values are dictionaries of their valuations for each woman.
+- `women_valuations` (dict): A dictionary where keys are women and values are dictionaries of their valuations for each man.
+
+## Returns
+
+- `dict`: A dictionary representing the Nash stable matching, where keys are men and values are their matched women.
+
+
+
 ## Usage
 ```python
 from matching_algorithms import nash_stable_matching
@@ -640,6 +768,23 @@ This formulation maximizes the sum of valuations while ensuring that each partic
 ## Implementation
 
 The algorithm has been implemented in Python using the PuLP library for linear programming. You can use this implementation to find utilitarian stable matchings based on given valuations.
+
+## Parameters
+
+- `men_valuations` : dict
+  - A dictionary where keys are men and values are dictionaries of their valuations for each woman.
+  - Example: `{'M1': {'W1': 10, 'W2': 5}, 'M2': {'W1': 7, 'W2': 8}}`
+
+- `women_valuations` : dict
+  - A dictionary where keys are women and values are dictionaries of their valuations for each man.
+  - Example: `{'W1': {'M1': 8, 'M2': 6}, 'W2': {'M1': 5, 'M2': 9}}`
+
+## Returns
+
+- dict
+  - A dictionary representing the utilitarian stable matching, where keys are men and values are their matched women.
+  - Example: `{'M1': 'W1', 'M2': 'W2'}`
+  
 
 ## Usage
 ```python
