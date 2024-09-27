@@ -19,7 +19,6 @@ This project implements a variety of matching algorithms, including the Deferred
     - [Random Stable Matching](#random-stable-matching)
     - [Egalitarian Stable Matching](#egalitarian-stable-matching)
     - [Nash Stable Matching](#nash-welfare-stable-matching)
-    - [Sex-Equal Stable Matching](#sex-equal-stable-matching)
     - [Utilitarian Stable Matching](#utilitarian-stable-matching)
   - [Linear Programming Algorithms without Stability Constraint](#linear-programming-algorithms-without-stability-constraint)
     - [Egalitarian Matching](#egalitarian-matching)
@@ -215,10 +214,6 @@ The Egalitarian Stable Matching algorithm, implemented using linear programming,
 
 The Nash Welfare Stable Matching algorithm aims to maximize the product of the utilities (or satisfaction) of all participants in the matching. It is a fairness criterion that balances equity and efficiency in matching outcomes.
 
-#### Sex-Equal Stable Matching
-
-The Sex-Equal Stable Matching algorithm seeks to balance the satisfaction between two groups (e.g., men and women) in the matching process. It ensures that both sides have similar outcomes in terms of ranks and preferences.
-
 #### Utilitarian Stable Matching
 
 The Utilitarian Stable Matching algorithm focuses on maximizing the total utility (or satisfaction) of all participants. It seeks to produce a socially optimal matching where the sum of everyone's satisfaction is maximized.
@@ -233,9 +228,6 @@ The Egalitarian Matching algorithm, implemented using linear programming, finds 
 
 The Nash Matching algorithm aims to maximize the product of the utilities (or satisfaction) of all participants in the matching. It is a fairness criterion that balances equity and efficiency in matching outcomes without stability constraint.
 
-#### Sex-Equal Matching
-
-The Sex-Equal Matching algorithm seeks to balance the satisfaction between two groups (e.g., men and women) in the matching process. It ensures that both sides have similar outcomes in terms of ranks and preferences without stability constraint.
 
 #### Utilitarian Stable Matching
 
