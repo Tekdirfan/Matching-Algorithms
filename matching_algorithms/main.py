@@ -141,16 +141,118 @@ def school_choice_da(schools, students, student_proposing=True):
 
 #------------------------------------------------------------------------------------------------------------
 ##Boston Mechanism
-
-
-
+def boston_mechanism(students, schools):
+    """
+    Implements the Boston mechanism for school choice.
+    
+    Args:
+    students (dict): A dictionary where keys are student names and values are lists of school preferences.
+    schools (dict): A dictionary where keys are school names and values are dictionaries containing:
+                    'capacity': integer representing the school's capacity
+                    'priorities': list of student names in order of priority
+    
+    Returns:
+    dict: A dictionary representing the matching, where keys are student names and values are assigned schools.
+    """
+    
+    matching = {student: None for student in students}
+    school_capacities = {school: schools[school]['capacity'] for school in schools}
+    
+    # Iterate through preference rounds
+    for preference_level in range(max(len(prefs) for prefs in students.values())):
+        # Collect students who are applying to schools in this round
+        applications = {}
+        for student, preferences in students.items():
+            if matching[student] is None and preference_level < len(preferences):
+                school = preferences[preference_level]
+                if school not in applications:
+                    applications[school] = []
+                applications[school].append(student)
+        
+        # Process applications for each school
+        for school, applicants in applications.items():
+            available_seats = school_capacities[school]
+            if available_seats > 0:
+                # Sort applicants by priority
+                sorted_applicants = sorted(applicants, key=lambda s: schools[school]['priorities'].index(s))
+                
+                # Assign seats to top priority applicants
+                for student in sorted_applicants[:available_seats]:
+                    matching[student] = school
+                    school_capacities[school] -= 1
+    
+    return matching
 
 
 #------------------------------------------------------------------------------------------------------------
+
 ##Top Trading Cycle(TTC)
 
+def top_trading_cycles(students, schools):
+    """
+    Implements the Top Trading Cycles algorithm for school choice.
+    
+    Args:
+    students (dict): A dictionary where keys are student names and values are lists of school preferences.
+    schools (dict): A dictionary where keys are school names and values are dictionaries containing:
+                    'capacity': integer representing the school's capacity
+                    'preferences': list of student names in order of preference
+    
+    Returns:
+    dict: A dictionary representing the matching, where keys are student names and values are assigned schools.
+    """
+    
+    # Initialize
+    unassigned_students = set(students.keys())
+    school_capacities = {school: schools[school]['capacity'] for school in schools}
+    current_owners = {school: [] for school in schools}
+    matching = {}
 
+    while unassigned_students:
+        # Step 1: Point to most preferred school/student
+        student_pointers = {}
+        school_pointers = {school: [] for school in schools}
+        
+        for student in unassigned_students:
+            for school in students[student]:
+                if school_capacities[school] > 0:
+                    student_pointers[student] = school
+                    break
+        
+        for school in schools:
+            for student in schools[school]['preferences']:
+                if student in unassigned_students:
+                    school_pointers[school].append(student)
+                    if len(school_pointers[school]) == school_capacities[school]:
+                        break
 
+        # Step 2: Identify cycles
+        assigned_in_cycle = set()
+        for student in unassigned_students:
+            if student in assigned_in_cycle:
+                continue
+            
+            cycle = [student]
+            current = student
+            while True:
+                school = student_pointers[current]
+                cycle.append(school)
+                if not school_pointers[school]:
+                    break
+                current = school_pointers[school][0]
+                if current in cycle:
+                    cycle = cycle[cycle.index(current):]
+                    for i in range(0, len(cycle), 2):
+                        matching[cycle[i]] = cycle[i+1]
+                        assigned_in_cycle.add(cycle[i])
+                        school_capacities[cycle[i+1]] -= 1
+                    break
+                cycle.append(current)
+
+        # Remove assigned students
+        unassigned_students -= assigned_in_cycle
+
+    return matching
 
 
 #------------------------------------------------------------------------------------------------------------
