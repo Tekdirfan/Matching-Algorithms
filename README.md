@@ -468,19 +468,211 @@ for man, woman in matching.items():
 
 ### Linear Programming Algorithms without Stability Constraint
 
-#### Egalitarian  Matching
+# Egalitarian Matching (Without Stability Constraint)
 
-The Egalitarian Matching algorithm, implemented using linear programming, finds a matching that minimizes the total dissatisfaction (or rank) across all participants. It seeks to produce the most "fair" matching without stability constraint.
+## Overview
 
-#### Nash Matching
+The **Egalitarian Matching** algorithm without stability constraints finds a matching that minimizes the total sum of preference ranks across all participants. This approach aims to produce a "fair" matching by balancing the satisfaction of all participants, without the requirement of stability. The algorithm is implemented using linear programming.
 
-The Nash Matching algorithm aims to maximize the product of the utilities (or satisfaction) of all participants in the matching. It is a fairness criterion that balances equity and efficiency in matching outcomes without stability constraint.
+## Mathematical Formulation
+
+The objective function for the Egalitarian Matching problem can be formulated as follows:
+
+$$
+\text{minimize} \quad \sum_{(\ell,r) \in L \times R} (h(\ell,r) + h(r,\ell)) \cdot \mu_{\ell,r}
+$$
 
 
-#### Utilitarian Stable Matching
+subject to:
 
-The Utilitarian Matching algorithm focuses on maximizing the total utility (or satisfaction) of all participants. It seeks to produce a socially optimal matching where the sum of everyone's satisfaction is maximized without stability constraint.
+$$
+\sum_{r \in R} \mu_{\ell,r} = 1 \quad \forall \, \ell \in L
+$$
 
+
+$$
+\sum_{\ell \in L} \mu_{\ell,r} = 1 \quad \forall \, r \in R
+$$
+
+
+$$
+\mu_{\ell,r} \geq 0 \quad \forall \, (\ell,r) \in L \times R
+$$
+
+
+Where:
+- $$L$$ and $$R$$ are the two sets of participants to be matched.
+- $$h(\ell,r)$$ is the rank of $$r$$ in $$\ell$$'s preference list.
+- $$\mu_{\ell,r}$$ is a binary variable indicating whether participant $$\ell$$ and participant $$r$$ are matched.
+
+This formulation minimizes the sum of ranks for all matched pairs, ensuring that each participant is matched exactly once. Unlike the stable matching variants, this formulation does not include stability constraints.
+
+## Implementation
+
+The algorithm is implemented in Python using the PuLP library for linear programming. It directly minimizes the sum of ranks without considering stability constraints.
+
+## Usage
+
+To use the algorithm, provide dictionaries representing the preferences of participants. The output will be a dictionary indicating the matched pairs.
+
+```python
+men_prefs = {
+    'M1': ['W1', 'W2', 'W3'],
+    'M2': ['W2', 'W1', 'W3'],
+    'M3': ['W3', 'W1', 'W2']
+}
+
+women_prefs = {
+    'W1': ['M2', 'M1', 'M3'],
+    'W2': ['M1', 'M2', 'M3'],
+    'W3': ['M3', 'M2', 'M1']
+}
+
+matching = egalitarian_matching(men_prefs, women_prefs)
+print("Egalitarian Matching:")
+for man, woman in matching.items():
+    print(f"{man} - {woman}")
+```
+# Nash Matching (Without Stability Constraint)
+
+## Overview
+
+The **Nash Matching** algorithm without stability constraints finds a matching that maximizes the product of utilities (or satisfaction) of all participants. This approach aims to balance equity and efficiency in matching outcomes without enforcing stability. The algorithm is implemented using linear programming with a logarithmic transformation.
+
+## Mathematical Formulation
+
+The objective function for the Nash Matching problem can be formulated as follows:
+
+$$
+\text{maximize} \quad \prod_{(\ell,r) \in L \times R} (v(\ell,r) + v(r,\ell))^{\mu_{\ell,r}}
+$$
+
+
+which is equivalent to maximizing:
+
+$$
+\text{maximize} \quad \sum_{(\ell,r) \in L \times R} \mu_{\ell,r} \log(v(\ell,r) + v(r,\ell))
+$$
+
+
+subject to:
+
+$$
+\sum_{r \in R} \mu_{\ell,r} = 1 \quad \forall \, \ell \in L
+$$
+
+
+$$
+\sum_{\ell \in L} \mu_{\ell,r} = 1 \quad \forall \, r \in R
+$$
+
+
+$$
+\mu_{\ell,r} \geq 0 \quad \forall \, (\ell,r) \in L \times R
+$$
+
+
+Where:
+- $$L$$ and $$R$$ are the two sets of participants to be matched.
+- $$v(\ell,r)$$ is the valuation that participant $$\ell$$ assigns to being matched with participant $$r$$.
+- $$\mu_{\ell,r}$$ is a binary variable indicating whether participant $$\ell$$ and participant $$r$$ are matched.
+
+## Implementation
+
+The algorithm is implemented in Python using the PuLP library for linear programming. The logarithmic transformation allows us to solve this as a linear programming problem. The key features of the implementation include:
+
+- Use of binary variables for matching and continuous variables for log utilities.
+- Logarithmic utility constraints to handle the product maximization.
+- No stability constraints, focusing solely on maximizing the Nash social welfare.
+
+## Usage
+
+To use the algorithm, provide dictionaries representing the valuations of participants for each other. The output will be a dictionary indicating the matched pairs.
+
+```python
+
+men_valuations = {
+    'M1': {'W1': 10, 'W2': 5, 'W3': 3},
+    'M2': {'W1': 4, 'W2': 8, 'W3': 6},
+    'M3': {'W1': 7, 'W2': 6, 'W3': 9}
+}
+
+women_valuations = {
+    'W1': {'M1': 8, 'M2': 6, 'M3': 4},
+    'W2': {'M1': 5, 'M2': 9, 'M3': 7},
+    'W3': {'M1': 3, 'M2': 5, 'M3': 10}
+}
+
+matching = nash_matching(men_valuations, women_valuations)
+print("Nash Matching:")
+for man, woman in matching.items():
+    print(f"{man} - {woman}")
+```
+# Utilitarian Matching (Without Stability Constraint)
+
+## Overview
+
+The **Utilitarian Matching** algorithm without stability constraints finds a matching that maximizes the total sum of utilities (or valuations) across all participants. This approach aims to produce an "efficient" matching by maximizing overall welfare, without the requirement of stability. The algorithm is implemented using linear programming.
+
+## Mathematical Formulation
+
+The objective function for the Utilitarian Matching problem can be formulated as follows:
+
+$$
+\text{maximize} \quad \sum_{(\ell,r) \in L \times R} v(\ell,r) \cdot \mu_{\ell,r}
+$$
+
+
+subject to:
+
+$$
+\sum_{r \in R} \mu_{\ell,r} = 1 \quad \forall \, \ell \in L
+$$
+
+
+$$
+\sum_{\ell \in L} \mu_{\ell,r} = 1 \quad \forall \, r \in R
+$$
+
+
+$$
+\mu_{\ell,r} \geq 0 \quad \forall \, (\ell,r) \in L \times R
+$$
+
+
+Where:
+- $$L$$ and $$R$$ are the two sets of participants to be matched.
+- $$v(\ell,r)$$ is the utility (or valuation) that participant $$\ell$$ assigns to being matched with participant $$r$$.
+- $$\mu_{\ell,r}$$ is a binary variable indicating whether participant $$\ell$$ and participant $$r$$ are matched.
+
+This formulation maximizes the sum of utilities for all matched pairs, ensuring that each participant is matched exactly once. Unlike the stable matching variants, this formulation does not include stability constraints.
+
+## Implementation
+
+The algorithm is implemented in Python using the PuLP library for linear programming. It directly maximizes the sum of utilities without considering stability constraints.
+
+## Usage
+
+To use the algorithm, provide dictionaries representing the valuations of participants for each other. The output will be a dictionary indicating the matched pairs.
+
+```python
+men_valuations = {
+    'M1': {'W1': 10, 'W2': 5, 'W3': 3},
+    'M2': {'W1': 4, 'W2': 8, 'W3': 6},
+    'M3': {'W1': 7, 'W2': 6, 'W3': 9}
+}
+
+women_valuations = {
+    'W1': {'M1': 8, 'M2': 6, 'M3': 4},
+    'W2': {'M1': 5, 'M2': 9, 'M3': 7},
+    'W3': {'M1': 3, 'M2': 5, 'M3': 10}
+}
+
+matching = utilitarian_matching(men_valuations, women_valuations)
+print("Utilitarian Matching:")
+for man, woman in matching.items():
+    print(f"{man} - {woman}")everyone's satisfaction is maximized without stability constraint.
+```
 
 ## Contributing
 
