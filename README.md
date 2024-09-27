@@ -10,9 +10,9 @@ This project implements a variety of matching algorithms, including the Deferred
   - [Marriage Market Deferred Acceptance](#marriage-market-deferred-acceptance)
   - [School Choice Deferred Acceptance](#school-choice-deferred-acceptance)
   - [Boston Mechanism](#boston-mechanism)
-  - [Top Trading Cycles (TTC) for School Choice](#top-trading-cycles-(ttc)-for-school-choice)
+  - [Top Trading Cycles for School Choice](#top-trading-cycles-for-school-choice)
   - [Serial Dictatorship](#serial-dictatorship)
-  - [Random Serial Dictatorship (RSD)](#random-serial-dictatorship-(rsd))
+  - [Random Serial Dictatorship](#random-serial-dictatorship)
   - [Linear Programming Algorithms with Stability Constraint](#linear-programming-algorithms-with-stability-constraint)
     - [Stable Matching via Linear Programming](#stable-matching-via-linear-programming)
     - [Egalitarian Stable Matching](#egalitarian-stable-matching)
@@ -203,7 +203,7 @@ print("Boston Mechanism Matching:")
 for student, school in matching.items():
     print(f"{student} -> {school}")
 ```
-# Top Trading Cycles (TTC) for School Choice
+# Top Trading Cycles for School Choice
 
 ## Overview
 
@@ -328,7 +328,7 @@ for student, school in matching.items():
     print(f"{student} -> {school if school else 'Unassigned'}")
 ```
 
-# Random Serial Dictatorship (RSD)
+# Random Serial Dictatorship 
 
 ## Overview
 
