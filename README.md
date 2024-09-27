@@ -205,9 +205,78 @@ $$
 
 Here, $x_{ij}$ is a binary variable indicating whether participant $i$ is matched to participant $j$, and $u_{ij}$ represents the utility or preference of participant $i$ for participant $j$.
 
-#### Egalitarian Stable Matching
+# Egalitarian Stable Matching
 
-The Egalitarian Stable Matching algorithm, implemented using linear programming, finds a stable matching that minimizes the total dissatisfaction (or rank) across all participants. It seeks to produce the most "fair" matching.
+## Overview
+
+The **Egalitarian Stable Matching** algorithm finds a stable matching that minimizes the total dissatisfaction (or rank) across all participants. It seeks to produce the most "fair" matching by minimizing the sum of preference ranks for all matched pairs. This algorithm is implemented using linear programming.
+
+## Mathematical Formulation
+
+The objective function for the Egalitarian Stable Matching problem can be formulated as follows:
+
+$$
+\text{minimize} \quad \sum_{(\ell,r) \in L \times R} \big( h(\ell,r) + h(r,\ell) \big) \cdot \mu_{\ell,r}
+$$
+
+
+subject to:
+
+$$
+\sum_{r \in R} \mu_{\ell,r} = 1 \quad \forall \, \ell \in L
+$$
+
+
+$$
+\sum_{\ell \in L} \mu_{\ell,r} = 1 \quad \forall \, r \in R
+$$
+
+
+$$
+\mu_{\ell,r} + \sum_{s \in R: \, s \, \succ_\ell \, r} \mu_{\ell,s} + \sum_{k \in L: \, k \, \succ_r \, \ell} \mu_{k,r} \geq 1 \quad \forall \, (\ell,r) \in L \times R
+$$
+
+
+$$
+\mu_{\ell,r} \geq 0 \quad \forall \, (\ell,r) \in L \times R
+$$
+
+
+Where:
+- $$L$$ and $$R$$ are the two sets of participants to be matched.
+- $$h(\ell,r)$$ is the rank of $$r$$ in $$\ell$$'s preference list.
+- $$\mu_{\ell,r}$$ is a binary variable indicating whether participant $$\ell$$ and participant $$r$$ are matched.
+- $$s \succ_\ell r$$ means that participant $$\ell$$ prefers participant $$s$$ to participant $$r$$.
+
+This formulation minimizes the sum of ranks while ensuring that each participant is matched exactly once and that the matching is stable. The algorithm produces a matching that is Pareto efficient with respect to the participants' preferences.
+
+## Implementation
+
+The algorithm has been implemented in Python using the PuLP library for linear programming. You can use this implementation to find egalitarian stable matchings based on given preferences.
+
+## Usage
+
+To use the algorithm, provide dictionaries representing the preferences of men and women. The output will be a dictionary indicating the matched pairs.
+
+```python
+men_prefs = {
+    'M1': ['W1', 'W2', 'W3'],
+    'M2': ['W2', 'W1', 'W3'],
+    'M3': ['W3', 'W1', 'W2']
+}
+
+women_prefs = {
+    'W1': ['M2', 'M1', 'M3'],
+    'W2': ['M1', 'M2', 'M3'],
+    'W3': ['M3', 'M2', 'M1']
+}
+
+matching = egalitarian_matching(men_prefs, women_prefs)
+print("Egalitarian Matching:")
+for man, woman in matching.items():
+    print(f"{man} - {woman}")
+```
+
 
 #### Nash Stable Matching
 
