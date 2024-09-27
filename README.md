@@ -111,6 +111,15 @@ The **School Choice Deferred Acceptance** algorithm adapts the classic Deferred 
 
 ## Characteristics
 
+- Strategy-proof: Students have no incentive to misrepresent their true preferences[1][2].
+- Produces stable matchings: No student-school pair would prefer each other over their assigned matches[1].
+- Student-optimal: When students propose, it produces the best stable matching for students[1].
+- Favors truthful revelation of preferences over strategic behavior.
+- More complex to understand than simpler mechanisms like Boston.
+- Eliminates "justified envy" - no student can claim they should have a spot at a school over someone with lower priority[2].
+- Not necessarily Pareto efficient among students (though it is Pareto efficient among stable matchings)[1].
+- Immune to manipulation by individual participants, but potentially vulnerable to group manipulations[3].
+
 ## Usage
 ```python
 # Example usage
@@ -243,6 +252,17 @@ The Serial Dictatorship mechanism is a priority-based allocation method where pa
 
 ## Characteristics
 
+- Strategy-proof: Agents have no incentive to misrepresent their preferences[4][5].
+- Pareto efficient: Always produces a Pareto-optimal matching[4][5].
+- Simple to understand and implement: Agents choose sequentially based on a predetermined order[4].
+- Group strategy-proof: No group of agents can jointly misreport preferences to make some members better off without making others worse off[4].
+- Neutral: The outcome doesn't depend on the labeling of the objects[4][5].
+- Non-bossy: No agent can change the outcome for others without changing their own allocation[5].
+- Deterministic: Given a fixed priority order, the outcome is always the same for the same preferences[1].
+- May lead to unfair outcomes if the priority order is not carefully chosen or justified.
+
+
+
 ## Usage
 ```python
 # Define student preferences
@@ -285,7 +305,16 @@ The Random Serial Dictatorship (RSD) mechanism is a variation of the Serial Dict
 
 3. **Allocation:** The process continues until all participants have made their selections or all options have been allocated.
 
-## Characteristics
+## Characteristics 
+
+- Strategy-proof: Agents have no incentive to misrepresent their preferences[3].
+- Ex-post Pareto efficient: The final allocation is always Pareto optimal[3].
+- Fair ex-ante: All agents have an equal chance of being in any position in the selection order[3].
+- Simple to understand and implement: Agents choose sequentially based on a randomly determined order.
+- Not ex-ante Pareto efficient: There may exist other random mechanisms that Pareto dominate RSD in expectation[3].
+- Not necessarily sd-efficient: May be dominated by other mechanisms in terms of stochastic dominance[3].
+- Randomized: Introduces an element of chance, which can be seen as fair when there's no justified priority order[2][3].
+- Widely used in practice: Common in house allocation problems, such as allocating dormitory rooms to students[2].
 
 ## Usage
 ```python
