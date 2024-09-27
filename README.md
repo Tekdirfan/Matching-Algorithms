@@ -44,9 +44,9 @@ pip install .
 ```
 
 
-## Algorithms Implemented
+# Algorithms Implemented
 
-### Deferred Acceptance
+## Deferred Acceptance
 
 # Marriage Market Deferred Acceptance
 
@@ -261,26 +261,68 @@ for student, school in assignment.items():
     print(f"{student} -> {school}")
 ```
 
-### Serial Dictatorship
+# Serial Dictatorship
+
+## Overview
 
 The Serial Dictatorship mechanism is a priority-based allocation method where participants select their preferred options sequentially based on a predetermined priority order. This mechanism is commonly applied in contexts such as school choice and housing allocation.
 
-The mechanism operates as follows:
+## How it Works
 
-1. **Priority Order:** Each participant is assigned a rank or priority based on a predetermined criterion (e.g., random lottery, academic performance, etc.). This rank determines the order in which participants will choose their preferred options.
+1. **Priority Order:** Each participant is assigned a rank or priority based on a predetermined criterion (e.g., random lottery, academic performance, etc.).
 
-2. **Choice Process:** Starting with the participant with the highest priority, each participant selects their most preferred available option from the set of options (e.g., schools, houses). Once a participant selects an option, it becomes unavailable for others.
+2. **Choice Process:** Starting with the highest priority participant, each individual selects their most preferred available option.
 
-3. **Subsequent Choices:** The next participant in the priority order then selects their preferred option from the remaining available choices. This process continues until all participants have made their selections or until all options have been allocated.
+3. **Subsequent Choices:** The next participant in the priority order selects from the remaining available choices.
 
-4. **Final Allocation:** The outcome of the Serial Dictatorship mechanism results in a matching where each participant receives an option they have chosen, based on their preferences and the availability of options at the time of their turn.
+4. **Final Allocation:** The process continues until all participants have made their selections or all options have been allocated.
 
-The Serial Dictatorship mechanism is **strategy-proof**, meaning that participants have no incentive to misrepresent their preferences, as their best outcome is achieved by honestly selecting their most preferred available option. However, the mechanism can lead to inequalities based on the predetermined priority order, which may not always reflect the participants' actual needs or circumstances.
+```python
+# Define student preferences
+students = {
+    'Alice': ['School1', 'School2', 'School3'],
+    'Bob': ['School2', 'School1', 'School3'],
+    'Charlie': ['School1', 'School3', 'School2']
+}
 
+# Define school capacities
+schools = {
+    'School1': 1,
+    'School2': 1,
+    'School3': 1
+}
 
-### Random Serial Dictatorship
+# Define student order (priority)
+student_order = ['Alice', 'Bob', 'Charlie']
+
+# Run the algorithm
+matching = serial_dictatorship(students, schools, student_order)
+
+# Print the results
+print("\nFinal Matching:")
+for student, school in matching.items():
+    print(f"{student} -> {school if school else 'Unassigned'}")
+```
+
+# Random Serial Dictatorship (RSD)
+
+## Overview
 
 The Random Serial Dictatorship (RSD) mechanism is a variation of the Serial Dictatorship mechanism that introduces an element of randomness in determining the order in which participants make their selections. This method is particularly useful in situations where there is no pre-existing priority order among participants.
+
+## How it Works
+
+1. **Random Ordering:** A random order of participants is generated, typically using a fair randomization process.
+
+2. **Sequential Selection:** Following this random order, each participant selects their most preferred available option from the remaining choices.
+
+3. **Allocation:** The process continues until all participants have made their selections or all options have been allocated.
+
+## Key Properties
+
+- **Strategy-proof:** Participants have no incentive to misrepresent their preferences.
+- **Ex-post Pareto efficient:** The resulting allocation is always Pareto efficient.
+- **Fair ex-ante:** Due to the random ordering, all participants have an equal chance of being in any position in the selection order.
 
 #### How It Works:
 
@@ -296,8 +338,31 @@ The Random Serial Dictatorship (RSD) mechanism is a variation of the Serial Dict
 
 The RSD mechanism is particularly effective in educational contexts, such as school assignments, where fairness and transparency in the selection process are essential.
 
+## Usage
+```python
+# Define student preferences
+students = {
+    'Alice': ['School1', 'School2', 'School3'],
+    'Bob': ['School2', 'School1', 'School3'],
+    'Charlie': ['School1', 'School3', 'School2'],
+    'David': ['School3', 'School2', 'School1']
+}
 
-### Linear Programming Algorithms with Stability Constraint
+# Define school capacities
+schools = {
+    'School1': 2,
+    'School2': 1,
+    'School3': 1
+}
+
+# Run the algorithm
+matching = random_serial_dictatorship(students, schools)
+
+# Print the results
+print("\nFinal Matching:")
+for student, school in matching.items():
+    print(f"{student} -> {school if school else 'Unassigned'}")
+```
 
 # Stable Matching via Linear Programming
 
@@ -592,7 +657,7 @@ for man, woman in matching.items():
     print(f"{man} - {woman}")
 ```
 
-### Linear Programming Algorithms without Stability Constraint
+## Linear Programming Algorithms without Stability Constraint
 
 # Egalitarian Matching (Without Stability Constraint)
 
