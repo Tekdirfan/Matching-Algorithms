@@ -993,7 +993,9 @@ print(f"Is the matching stable? {is_stable_result}")
 
 ## Contributing
 
-Contributions are welcome! Please feel free to submit a pull request or open an issue for any suggestions or improvements.
+Contributions are welcome! Please feel free to submit a pull request or open an issue for any suggestions or improvements. 
+
+If you have any questions or would like to discuss potential contributions, you can reach me at [here](mailto:irfan.tekdir@gmail.com).
 
 ## License
 
