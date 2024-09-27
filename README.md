@@ -6,7 +6,6 @@ This project implements a variety of matching algorithms, including the Deferred
 ## Table of Contents
 
 - [Installation](#installation)
-- [Usage](#usage)
 - [Algorithms Implemented](#algorithms-implemented)
   - [Deferred Acceptance](#deferred-acceptance)
     - [Marriage Market Deferred Acceptance](#marriage-market-deferred-acceptance)
@@ -44,38 +43,18 @@ pip install .
 
 ```
 
-## Usage
-
-Here’s a quick example of how to use the matching algorithms in your Python code:
-
-```python
-from matching_algorithms import deferred_acceptance, boston_mechanism, ttc
-
-# Example data
-students = [...]
-schools = [...]
-
-# Using the Deferred Acceptance algorithm
-matches = deferred_acceptance(students, schools)
-
-# Using the Boston Mechanism
-boston_matches = boston_mechanism(students, schools)
-
-# Using the Top Trading Cycles (TTC) mechanism
-ttc_matches = ttc(students, schools)
-
-# Using linear programming for stable matching
-lp_matches = stable_matching_lp(students, schools)
-
-```
 
 ## Algorithms Implemented
 
 ### Deferred Acceptance
 
-#### Marriage Market Deferred Acceptance
+# Marriage Market Deferred Acceptance
+
+## Overview
 
 The Deferred Acceptance algorithm for the Marriage Market is a two-sided matching algorithm that pairs participants from two groups (e.g., men and women) based on their preferences. The algorithm ensures that no pair of participants would rather be matched with each other than with their current match, leading to a stable matching. In this setup, one group (typically men) proposes to the other group, and participants from the second group (women) accept or reject proposals based on their preferences.
+
+## Algorithm Steps
 
 The algorithm proceeds in rounds:
 
@@ -84,56 +63,203 @@ The algorithm proceeds in rounds:
 3. Rejected participants propose to their next most-preferred partner in the next round.
 4. The process continues until no more proposals are made, and the tentative matches become final.
 
-#### School Choice Deferred Acceptance
+## Implementation
 
-The Deferred Acceptance algorithm in the School Choice setup adapts the same basic framework but focuses on assigning students to schools based on their preferences and the schools' priorities (e.g., entrance exams or other criteria).
+The algorithm is implemented in Python, using dictionaries to represent preferences and matches.
 
-In this version:
+## Usage
 
-1. Students submit their ranked preferences for schools.
-2. Schools rank students based on their priorities.
+To use the Marriage Market Deferred Acceptance algorithm, follow these steps:
+
+1. Import the function:
+
+```python
+from marriage_market import deferred_acceptance
+
+men_preferences = {
+    'M1': ['W1', 'W2', 'W3'],
+    'M2': ['W2', 'W1', 'W3'],
+    'M3': ['W3', 'W1', 'W2']
+}
+
+women_preferences = {
+    'W1': ['M2', 'M3', 'M1'],
+    'W2': ['M1', 'M2', 'M3'],
+    'W3': ['M3', 'M1', 'M2']
+}
+
+matches = deferred_acceptance(men_preferences, women_preferences)
+
+print("Final Matches:")
+for man, woman in matches.items():
+    print(f"{man} is matched with {woman}")
+```
+
+# School Choice Deferred Acceptance
+
+## Overview
+
+The **School Choice Deferred Acceptance** algorithm adapts the classic Deferred Acceptance algorithm to the context of assigning students to schools. It creates a stable matching between students and schools based on student preferences and school priorities, ensuring no student-school pair would prefer each other over their current assignment.
+
+## Algorithm Description
+
+1. Students submit ranked preferences for schools.
+2. Schools rank students based on their priorities (e.g., entrance exams, sibling attendance).
 3. Students propose to their most-preferred school.
-4. Schools tentatively accept the highest-ranked students based on their capacity and reject others.
+4. Schools tentatively accept the highest-ranked students up to their capacity and reject others.
 5. Rejected students propose to their next most-preferred school in subsequent rounds.
-6. The process continues until no more students are proposing, and the tentative assignments become final.
+6. The process continues until no more students are proposing, and tentative assignments become final.
 
-This algorithm is commonly used for matching students to schools in centralized systems, ensuring that no student-school pair would rather be matched with each other than with their current assignment, resulting in a stable match.
+## Mathematical Formulation
 
+Let $S$ be the set of students and $C$ be the set of schools. For each student $s \in S$, let $P_s$ be their preference list over schools. For each school $c \in C$, let $\succ_c$ be its priority ordering over students, and $q_c$ its capacity.
 
-### Boston Mechanism
+The algorithm proceeds in rounds:
+
+1. In each round $t$:
+   - Each unassigned student $s$ proposes to their most preferred school $c$ that hasn't rejected them yet.
+   - Each school $c$ considers all proposals received, including students tentatively assigned from previous rounds.
+   - School $c$ tentatively accepts the top $q_c$ students according to $\succ_c$ and rejects the rest.
+
+2. The algorithm terminates when no student is rejected in a round.
+
+## Implementation
+
+Here's a Python implementation of the School Choice Deferred Acceptance algorithm:
+
+```python
+# Example usage
+students = {
+    'Alice': ['School1', 'School2', 'School3'],
+    'Bob': ['School2', 'School1', 'School3'],
+    'Charlie': ['School1', 'School3', 'School2']
+}
+
+schools = {
+    'School1': {'capacity': 1, 'priorities': ['Alice', 'Bob', 'Charlie']},
+    'School2': {'capacity': 1, 'priorities': ['Bob', 'Alice', 'Charlie']},
+    'School3': {'capacity': 1, 'priorities': ['Charlie', 'Alice', 'Bob']}
+}
+
+matching = school_choice_da(students, schools)
+print("School Choice Deferred Acceptance Matching:")
+for school, assigned_students in matching.items():
+    print(f"{school}: {', '.join(assigned_students)}")
+```
+# Boston Mechanism
+
+## Overview
 
 The Boston Mechanism is a direct, priority-based algorithm for matching students to schools. It is widely used in school admission processes where students have preferences over schools, and schools have priorities over students.
+
+## Algorithm
 
 The mechanism works as follows:
 
 1. **First Round:** Students submit their ranked preferences for schools. Schools first allocate spots to students who ranked them as their first choice, based on the schools' priorities and capacities.
-   
+
 2. **Subsequent Rounds:** Any students who didn't get placed in their first-choice schools (due to capacity limits) participate in the next round. In this round, the schools consider students who listed them as their second choice. This process continues until all students are matched to a school, or there are no more options left.
 
 3. **Final Assignment:** The algorithm ends when all remaining students are assigned based on their next available preference, or no further assignments are possible.
 
-The Boston Mechanism has some potential downsides, as students may not always have an incentive to rank schools truthfully. Since priority is given to students who rank a school as their top choice, students might strategically misrepresent their preferences to increase their chances of getting into a higher-priority school. This characteristic distinguishes the Boston Mechanism from strategy-proof algorithms like Deferred Acceptance.
+## Characteristics
 
-Despite these issues, the Boston Mechanism is still used in various school systems because of its simplicity and the fact that it gives students a higher chance of getting into their top-choice schools compared to some other mechanisms.
+- Not strategy-proof: Students may have incentives to misrepresent their true preferences.
+- Favors students who rank popular schools highly.
+- Simple to understand and implement.
+- May lead to unstable matchings.
 
-### Top Trading Cycles (TTC)
+## Implementation
 
-The Top Trading Cycles (TTC) mechanism is an efficient and strategy-proof algorithm used for allocating resources, particularly in situations where participants have preferences over the available resources. It is most famously used in housing markets and school choice problems.
+```python
+# Example usage:
+students = {
+    'Alice': ['School1', 'School2', 'School3'],
+    'Bob': ['School2', 'School1', 'School3'],
+    'Charlie': ['School1', 'School3', 'School2'],
+    'David': ['School3', 'School2', 'School1']
+}
 
-The TTC mechanism works as follows:
+schools = {
+    'School1': {
+        'capacity': 1,
+        'priorities': ['Alice', 'Bob', 'Charlie', 'David']
+    },
+    'School2': {
+        'capacity': 2,
+        'priorities': ['Bob', 'Alice', 'David', 'Charlie']
+    },
+    'School3': {
+        'capacity': 1,
+        'priorities': ['Charlie', 'David', 'Alice', 'Bob']
+    }
+}
 
-1. **Initial Preferences:** Each participant expresses their ranked preferences over the resources (e.g., houses, schools). Similarly, each resource may also have a priority ranking of participants.
+matching = boston_mechanism(students, schools)
+print("Boston Mechanism Matching:")
+for student, school in matching.items():
+    print(f"{student} -> {school}")
+```
+# Top Trading Cycles (TTC) for School Choice
 
-2. **Cycle Formation:** Each participant points to their most preferred available resource, and each resource points to its highest-priority participant (if applicable). These "pointing" relationships form directed graphs, which naturally create cycles.
+## Overview
 
-3. **Trading in Cycles:** Once a cycle is formed (even if the cycle only consists of one participant and one resource), the participants in the cycle are immediately matched to the resources they are pointing to. After the match, these participants and resources are removed from further consideration.
+The Top Trading Cycles (TTC) algorithm is an efficient and strategy-proof mechanism for school choice. It aims to produce a Pareto efficient matching where no student can be made better off without making another student worse off. The algorithm is particularly useful in scenarios where students have initial priority at certain schools (e.g., based on their current school or neighborhood).
 
-4. **Reiteration:** The process is repeated with the remaining participants and resources until no participants are left unmatched.
+## Algorithm Description
 
-5. **Final Allocation:** The mechanism ensures that all participants are matched to a resource that they consider to be as good as or better than any other option they could receive through any other stable mechanism. 
+1. Each student points to their favorite school among those with remaining seats.
+2. Each school points to the student with the highest priority among those pointing to it.
+3. This forms at least one cycle. Every student in a cycle is assigned to the school they are pointing to.
+4. Remove these students and reduce the capacity of the schools by the number of students assigned to them.
+5. Repeat steps 1-4 until all students are assigned or no more cycles can be formed.
 
-TTC is **strategy-proof**, meaning that participants cannot improve their outcomes by misrepresenting their preferences. It also ensures **Pareto efficiency**, meaning no other matching arrangement would make any participant better off without making someone else worse off.
+## Mathematical Formulation
 
+While TTC is typically described as an algorithmic process rather than an optimization problem, we can represent its outcome using binary variables:
+
+Let $x_{i,j}$ be 1 if student $i$ is assigned to school $j$, and 0 otherwise.
+
+The TTC outcome satisfies:
+
+$$
+\sum_{j \in S} x_{i,j} = 1 \quad \forall i \in N
+$$
+
+
+$$
+\sum_{i \in N} x_{i,j} \leq q_j \quad \forall j \in S
+$$
+
+
+Where $N$ is the set of students, $S$ is the set of schools, and $q_j$ is the capacity of school $j$.
+
+The TTC algorithm ensures these constraints are met while achieving Pareto efficiency.
+
+## Implementation
+
+Here's a basic implementation of TTC for school choice:
+
+```python
+# Example usage:
+students = {
+    'Alice': ['School1', 'School2', 'School3'],
+    'Bob': ['School2', 'School1', 'School3'],
+    'Charlie': ['School1', 'School3', 'School2']
+}
+schools = ['School1', 'School2', 'School3']
+capacities = {'School1': 1, 'School2': 1, 'School3': 1}
+priorities = {
+    'School1': ['Alice', 'Bob', 'Charlie'],
+    'School2': ['Bob', 'Charlie', 'Alice'],
+    'School3': ['Charlie', 'Alice', 'Bob']
+}
+
+assignment = top_trading_cycles(students, schools, capacities, priorities)
+print("TTC Assignment:")
+for student, school in assignment.items():
+    print(f"{student} -> {school}")
+```
 
 ### Serial Dictatorship
 
