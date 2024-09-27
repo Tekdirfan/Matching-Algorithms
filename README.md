@@ -46,8 +46,6 @@ pip install .
 
 # Algorithms Implemented
 
-## Deferred Acceptance
-
 # Marriage Market Deferred Acceptance
 
 ## Overview
@@ -64,7 +62,10 @@ The algorithm proceeds in rounds:
 4. The process continues until no more proposals are made, and the tentative matches become final.
 
 ## Characteristics
-
+- Stability: The algorithm always produces a stable matching, where no two participants would prefer each other over their assigned partners.
+- Optimality: The resulting matching is optimal for the proposing side. For example, if men propose, the outcome is the best possible stable matching for all men.
+- Truthfulness: It's a dominant strategy for the proposing side to reveal their true preferences. However, the receiving side may have incentives to misrepresent their preferences.
+- Efficiency: The algorithm terminates in at most n^2 rounds, where n is the number of participants on each side
 
 ## Usage
 
@@ -87,7 +88,7 @@ women_preferences = {
     'W3': ['M3', 'M1', 'M2']
 }
 
-matches = deferred_acceptance(men_preferences, women_preferences)
+matches = deferred_acceptance(men_preferences, women_preferences,men_propose=True)
 
 print("Final Matches:")
 for man, woman in matches.items():
@@ -111,14 +112,12 @@ The **School Choice Deferred Acceptance** algorithm adapts the classic Deferred 
 
 ## Characteristics
 
-- Strategy-proof: Students have no incentive to misrepresent their true preferences[1][2].
-- Produces stable matchings: No student-school pair would prefer each other over their assigned matches[1].
-- Student-optimal: When students propose, it produces the best stable matching for students[1].
+- Strategy-proof: Students have no incentive to misrepresent their true preferences.
+- Produces stable matchings: No student-school pair would prefer each other over their assigned matches.
+- Eliminates "justified envy" - no student can claim they should have a spot at a school over someone with lower priority.
+- Student-optimal: When students propose, it produces the best stable matching for students.
 - Favors truthful revelation of preferences over strategic behavior.
-- More complex to understand than simpler mechanisms like Boston.
-- Eliminates "justified envy" - no student can claim they should have a spot at a school over someone with lower priority[2].
-- Not necessarily Pareto efficient among students (though it is Pareto efficient among stable matchings)[1].
-- Immune to manipulation by individual participants, but potentially vulnerable to group manipulations[3].
+- Not necessarily Pareto efficient among students (though it is Pareto efficient among stable matchings)
 
 ## Usage
 ```python
@@ -130,12 +129,21 @@ students = {
 }
 
 schools = {
-    'School1': {'capacity': 1, 'priorities': ['Alice', 'Bob', 'Charlie']},
-    'School2': {'capacity': 1, 'priorities': ['Bob', 'Alice', 'Charlie']},
-    'School3': {'capacity': 1, 'priorities': ['Charlie', 'Alice', 'Bob']}
+    'School1': {
+        'priorities': ['Alice', 'Bob', 'Charlie', 'David'],
+        'capacity': 1,
+    },
+    'School2': {
+        'priorities': ['Bob', 'Alice', 'David', 'Charlie'],
+        'capacity': 2,
+    },
+    'School3': {
+        'priorities': ['Charlie', 'David', 'Alice', 'Bob'],
+        'capacity': 1,
+    }
 }
 
-matching = school_choice_da(students, schools)
+matching = school_choice_da(schools,students,student_proposing=True)
 print("School Choice Deferred Acceptance Matching:")
 for school, assigned_students in matching.items():
     print(f"{school}: {', '.join(assigned_students)}")
@@ -176,16 +184,16 @@ students = {
 
 schools = {
     'School1': {
+        'priorities': ['Alice', 'Bob', 'Charlie', 'David'],
         'capacity': 1,
-        'priorities': ['Alice', 'Bob', 'Charlie', 'David']
     },
     'School2': {
+        'priorities': ['Bob', 'Alice', 'David', 'Charlie'],
         'capacity': 2,
-        'priorities': ['Bob', 'Alice', 'David', 'Charlie']
     },
     'School3': {
+        'priorities': ['Charlie', 'David', 'Alice', 'Bob'],
         'capacity': 1,
-        'priorities': ['Charlie', 'David', 'Alice', 'Bob']
     }
 }
 
@@ -202,21 +210,35 @@ The Top Trading Cycles (TTC) algorithm is an efficient and strategy-proof mechan
 
 ## Algorithm Description
 
-1. Each student points to their favorite school among those with remaining seats.
-2. Each school points to the student with the highest priority among those pointing to it.
-3. This forms at least one cycle. Every student in a cycle is assigned to the school they are pointing to.
-4. Remove these students and reduce the capacity of the schools by the number of students assigned to them.
-5. Repeat steps 1-4 until all students are assigned or no more cycles can be formed.
+### Initialization
+- Set of unassigned students S
+- Set of schools C with capacities {qc}
+- Student preferences ≻s for each student s
+- School priorities ≻c for each school c
+
+### Main Loop
+While there are unassigned students and schools with available seats:
+
+1. Each school c with qc > 0 points to its highest-priority unassigned student.
+2. Each unassigned student s points to their most preferred school with available seats.
+3. Identify cycles in the resulting graph.
+4. For each identified cycle:
+   - Assign each student to their pointed school
+   - Remove assigned students from S
+   - Decrease school capacities
+   - Remove schools with no capacity
+5. If no cycles are found, break the loop
+
+### Output
+Return the final assignment
 
 ## Characteristics
 
-- Strategy-proof: Agents have no incentive to misrepresent their preferences[1].
-- Pareto efficient: Always produces a Pareto-optimal matching[1].
-- Individually rational: When agents have initial endowments, no agent is made worse off than their initial allocation[1].
-- Core selecting: The resulting allocation is always in the core of the housing market[1].
-- Respects improvement: If an agent's priority improves at a school, they are guaranteed to be no worse off[4].
-- Can handle indifferences in preferences[4].
-- More complex to implement than simpler mechanisms like Serial Dictatorship.
+- Strategy-proof: Agents have no incentive to misrepresent their preferences.
+- Pareto efficient: Always produces a Pareto-optimal matching.
+- Individually rational: When agents have initial endowments, no agent is made worse off than their initial allocation.
+- Core selecting: The resulting allocation is always in the core of the housing market.
+- Respects improvement: If an agent's priority improves at a school, they are guaranteed to be no worse off.
 - May not always produce a stable matching in the two-sided sense.
 
 ## Usage
@@ -228,15 +250,22 @@ students = {
     'Bob': ['School2', 'School1', 'School3'],
     'Charlie': ['School1', 'School3', 'School2']
 }
-schools = ['School1', 'School2', 'School3']
-capacities = {'School1': 1, 'School2': 1, 'School3': 1}
-priorities = {
-    'School1': ['Alice', 'Bob', 'Charlie'],
-    'School2': ['Bob', 'Charlie', 'Alice'],
-    'School3': ['Charlie', 'Alice', 'Bob']
+schools = {
+    'School1': {
+        'priorities': ['Alice', 'Bob', 'Charlie', 'David'],
+        'capacity': 1,
+    },
+    'School2': {
+        'priorities': ['Bob', 'Alice', 'David', 'Charlie'],
+        'capacity': 2,
+    },
+    'School3': {
+        'priorities': ['Charlie', 'David', 'Alice', 'Bob'],
+        'capacity': 1,
+    }
 }
 
-assignment = top_trading_cycles(students, schools, capacities, priorities)
+assignment = top_trading_cycles(students, schools)
 print("TTC Assignment:")
 for student, school in assignment.items():
     print(f"{student} -> {school}")
@@ -260,12 +289,8 @@ The Serial Dictatorship mechanism is a priority-based allocation method where pa
 
 ## Characteristics
 
-- Strategy-proof: Agents have no incentive to misrepresent their preferences[4][5].
-- Pareto efficient: Always produces a Pareto-optimal matching[4][5].
-- Simple to understand and implement: Agents choose sequentially based on a predetermined order[4].
-- Group strategy-proof: No group of agents can jointly misreport preferences to make some members better off without making others worse off[4].
-- Neutral: The outcome doesn't depend on the labeling of the objects[4][5].
-- Non-bossy: No agent can change the outcome for others without changing their own allocation[5].
+- Strategy-proof: Agents have no incentive to misrepresent their preferences.
+- Pareto efficient: Always produces a Pareto-optimal matching.
 - Deterministic: Given a fixed priority order, the outcome is always the same for the same preferences[1].
 - May lead to unfair outcomes if the priority order is not carefully chosen or justified.
 
@@ -315,14 +340,10 @@ The Random Serial Dictatorship (RSD) mechanism is a variation of the Serial Dict
 
 ## Characteristics 
 
-- Strategy-proof: Agents have no incentive to misrepresent their preferences[3].
-- Ex-post Pareto efficient: The final allocation is always Pareto optimal[3].
-- Fair ex-ante: All agents have an equal chance of being in any position in the selection order[3].
-- Simple to understand and implement: Agents choose sequentially based on a randomly determined order.
-- Not ex-ante Pareto efficient: There may exist other random mechanisms that Pareto dominate RSD in expectation[3].
-- Not necessarily sd-efficient: May be dominated by other mechanisms in terms of stochastic dominance[3].
-- Randomized: Introduces an element of chance, which can be seen as fair when there's no justified priority order[2][3].
-- Widely used in practice: Common in house allocation problems, such as allocating dormitory rooms to students[2].
+- Strategy-proof: Agents have no incentive to misrepresent their preferences
+- Ex-post Pareto efficient: The final allocation is always Pareto optimal.
+- Fair ex-ante: All agents have an equal chance of being in any position in the selection order.
+- Widely used in practice: Common in house allocation problems, such as allocating dormitory rooms to students.
 
 ## Usage
 ```python
