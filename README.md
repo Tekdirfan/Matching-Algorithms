@@ -310,7 +310,7 @@ women_prefs = {
     'W3': ['M3', 'M2', 'M1']
 }
 
-matching = egalitarian_matching(men_prefs, women_prefs)
+matching = egalitarian_stable_matching(men_prefs, women_prefs)
 print("Egalitarian Matching:")
 for man, woman in matching.items():
     print(f"{man} - {woman}")
