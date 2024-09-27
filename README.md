@@ -886,40 +886,111 @@ for man, woman in matching.items():
 
 ## Helper Functions
 
-# Generate Instance
+### Generate Instance
 
-This helper function for generating instances of matching markets. The function `generate_instance` can create preferences or valuations for both marriage markets and school choice problems, with options for cardinal or ordinal preferences.
+This helper function generates instances of matching markets. The function `generate_instance` can create preferences or valuations for both marriage markets and school choice problems, with options for cardinal or ordinal preferences.
 
-## Parameters
+#### Parameters
 
-- num_agents (int): Number of agents on each side of the market (or number of students for school choice)
-- is_marriage_market (bool): If True, generates for marriage market. If False, generates for school choice.
-- is_cardinal (bool): If True, generates cardinal valuations. If False, generates ordinal preferences.
+- `num_agents` (int): Number of agents on each side of the market (or number of students for school choice)
+- `is_marriage_market` (bool): If True, generates for marriage market. If False, generates for school choice.
+- `is_cardinal` (bool): If True, generates cardinal valuations. If False, generates ordinal preferences.
 
-## Returns
+#### Returns
 
 - For marriage market: A tuple of two dictionaries (men_preferences, women_preferences)
-- For school choice: A tuple of two dictionaries and one dictionary (student_preferences, school_preferences, school_capacities)
+- For school choice: A tuple of two dictionaries (student_preferences, school_data)
+  - `school_data` contains both priorities and capacities for each school
 
-## Usage
+#### Usage
 
 1. Generate preferences for a marriage market with ordinal preferences:
 ```python
-men_prefs, women_prefs = populate_preferences(10, is_marriage_market=True, is_cardinal=False)
+from matching_algorithms import generate_instance
+
+men_prefs, women_prefs = generate_instance(10, is_marriage_market=True, is_cardinal=False)
 ```
 
 2. Generate cardinal valuations for a marriage market:
 ```python
-men_vals, women_vals = populate_preferences(10, is_marriage_market=True, is_cardinal=True)
+from matching_algorithms import generate_instance
+
+men_vals, women_vals = generate_instance(10, is_marriage_market=True, is_cardinal=True)
 ```
-3. Generate preferences and capacities for a school choice problem:
+3. Generate preferences and data for a school choice problem:
 ```python
-student_prefs, school_prefs, school_caps = populate_preferences(100, is_marriage_market=False, is_cardinal=False)
+from matching_algorithms import generate_instance
+
+student_prefs, school_data = generate_instance(100, is_marriage_market=False, is_cardinal=False)
+
+# Accessing school priorities and capacities
+for school, data in school_data.items():
+    print(f"School {school}:")
+    print(f"  Priorities: {data['priorities']}")
+    print(f"  Capacity: {data['capacity']}")
 ```
+
 4. Generate cardinal valuations for a school choice problem:
 ```python
-student_vals, school_vals, school_caps = populate_preferences(100, is_marriage_market=False, is_cardinal=True)
+from matching_algorithms import generate_instance
+
+student_vals, school_data = generate_instance(100, is_marriage_market=False, is_cardinal=True)
+
+# Accessing school valuations and capacities
+for school, data in school_data.items():
+    print(f"School {school}:")
+    print(f"  Valuations: {data['priorities']}")  # In this case, 'priorities' contains valuations
+    print(f"  Capacity: {data['capacity']}")
 ```
+
+# Is Stable
+
+The `is_stable` function checks whether a given matching is stable under the provided preferences or valuations. It supports both ordinal preferences and cardinal valuations for both sides of the market.
+
+## Parameters
+
+- `matching` (dict): A dictionary representing the matching, where keys are side1 agents and values are their matched side2 agents.
+- `side1_preferences` (dict): A dictionary where keys are side1 agents and values are either lists (ordinal) or dicts (cardinal) of side2 agents.
+- `side2_preferences` (dict): A dictionary where keys are side2 agents and values are either lists (ordinal) or dicts (cardinal) of side1 agents.
+- `is_cardinal` (bool): If True, preferences are treated as cardinal valuations. If False, preferences are treated as ordinal.
+
+## Returns
+
+- `bool`: True if the matching is stable, False otherwise.
+
+## Usage
+
+1. Check stability with ordinal preferences:
+
+```python
+from matching_algorithms import is_stable, generate_instance
+
+# Generate an instance
+men_prefs, women_prefs = generate_instance(10, is_marriage_market=True, is_cardinal=False)
+
+# Assume we have a matching
+matching = {'M1': 'W1', 'M2': 'W2', ...}  # Complete this with your matching
+
+# Check stability
+is_stable_result = is_stable(matching, men_prefs, women_prefs, is_cardinal=False)
+print(f"Is the matching stable? {is_stable_result}")
+```
+```python
+2. Check stability with cardinal valuations:
+
+from matching_algorithms import is_stable, generate_instance
+
+# Generate an instance with cardinal valuations
+men_vals, women_vals = generate_instance(10, is_marriage_market=True, is_cardinal=True)
+
+# Assume we have a matching
+matching = {'M1': 'W1', 'M2': 'W2', ...}  # Complete this with your matching
+
+# Check stability
+is_stable_result = is_stable(matching, men_vals, women_vals, is_cardinal=True)
+print(f"Is the matching stable? {is_stable_result}")
+```
+
 ## Contributing
 
 Contributions are welcome! Please feel free to submit a pull request or open an issue for any suggestions or improvements.

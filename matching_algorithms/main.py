@@ -693,14 +693,12 @@ def utilitarian_matching(men_valuations, women_valuations):
 
 #------------------------------------------------------------------------------------------------------------
 ##Helper Functions
-
-import random
 import random
 
 def generate_instance(num_agents, is_marriage_market=True, is_cardinal=False):
     """
     Generates random preference lists or valuations for a given number of agents in a matching market.
-    For school choice, also generates random capacities for schools.
+    For school choice, also generates random capacities and priorities for schools.
     
     Args:
     num_agents (int): Number of agents on each side of the market (or number of students for school choice)
@@ -708,7 +706,7 @@ def generate_instance(num_agents, is_marriage_market=True, is_cardinal=False):
     is_cardinal (bool): If True, generates cardinal valuations. If False, generates ordinal preferences.
     
     Returns:
-    tuple: Two dictionaries (side1_preferences, side2_preferences) and a dictionary of school capacities if applicable
+    tuple: Two dictionaries (side1_preferences, side2_data)
     """
     
     # Generate lists of agents
@@ -728,31 +726,32 @@ def generate_instance(num_agents, is_marriage_market=True, is_cardinal=False):
         else:
             side1_preferences[agent] = random.sample(side2, len(side2))
     
-    # Generate preferences or valuations for side2
-    side2_preferences = {}
-    for agent in side2:
-        if is_cardinal:
-            side2_preferences[agent] = {partner: random.uniform(0, 100) for partner in side1}
-        else:
-            side2_preferences[agent] = random.sample(side1, len(side1))
-    
-    # Generate school capacities for school choice scenario
-    if not is_marriage_market:
+    # Generate preferences/priorities and capacities for side2
+    side2_data = {}
+    if is_marriage_market:
+        for agent in side2:
+            if is_cardinal:
+                side2_data[agent] = {partner: random.uniform(1, 100) for partner in side1}
+            else:
+                side2_data[agent] = random.sample(side1, len(side1))
+    else:
         total_capacity = random.randint(num_agents // 2, num_agents - 1)  # Ensure total capacity is less than num_agents
-        school_capacities = {}
         remaining_capacity = total_capacity
-        for school in side2[:-1]:  # Distribute capacity to all schools except the last one
+        for school in side2:
+            priorities = random.sample(side1, len(side1))
             if remaining_capacity > 0:
                 capacity = random.randint(1, remaining_capacity)
-                school_capacities[school] = capacity
                 remaining_capacity -= capacity
             else:
-                school_capacities[school] = 0
-        school_capacities[side2[-1]] = remaining_capacity  # Assign remaining capacity to the last school
-        
-        return side1_preferences, side2_preferences, school_capacities
+                capacity = 0
+            side2_data[school] = {
+                "priorities": priorities,
+                "capacity": capacity
+            }
+        # Assign any remaining capacity to the last school
+        side2_data[side2[-1]]["capacity"] += remaining_capacity
     
-    return side1_preferences, side2_preferences
+    return side1_preferences, side2_data
 
 
 def is_stable(matching, men_preferences, women_preferences):
