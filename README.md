@@ -20,7 +20,7 @@ This project implements a variety of matching algorithms, including the Deferred
     - [Utilitarian Stable Matching](#utilitarian-stable-matching)
   - [Linear Programming Algorithms without Stability Constraint](#linear-programming-algorithms-without-stability-constraint)
     - [Egalitarian Matching](#egalitarian-matching)
-    - [Nash Matching](#nash-welfare-matching)
+    - [Nash Matching](#nash-matching)
     - [Utilitarian Matching](#utilitarian-matching)
 - [Contributing](#contributing)
 - [License](#license)
@@ -679,7 +679,7 @@ for man, woman in matching.items():
 
 ## Linear Programming Algorithms without Stability Constraint
 
-# Egalitarian Matching (Without Stability Constraint)
+# Egalitarian Matching 
 
 ## Overview
 
@@ -744,7 +744,7 @@ print("Egalitarian Matching:")
 for man, woman in matching.items():
     print(f"{man} - {woman}")
 ```
-# Nash Matching (Without Stability Constraint)
+# Nash Matching 
 
 ## Overview
 
@@ -818,7 +818,7 @@ print("Nash Matching:")
 for man, woman in matching.items():
     print(f"{man} - {woman}")
 ```
-# Utilitarian Matching (Without Stability Constraint)
+# Utilitarian Matching
 
 ## Overview
 
