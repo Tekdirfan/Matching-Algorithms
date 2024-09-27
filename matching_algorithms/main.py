@@ -1,7 +1,7 @@
 import random
 import pulp
 import numpy as np
-
+import math
 ##Marriage Market Deferred Acceptance
 
 def deferred_acceptance(men_preferences, women_preferences, men_propose=True):
@@ -428,8 +428,70 @@ def egalitarian_stable_matching(men_preferences, women_preferences):
 
 #------------------------------------------------------------------------------------------------------------
 ##Nash Stable Matching
+import pulp
+import math
 
-
+def nash_stable_matching(men_valuations, women_valuations):
+    """
+    Calculates the Nash stable matching using linear programming.
+    This matching maximizes the product of utilities among all stable matchings.
+    
+    Args:
+    men_valuations (dict): A dictionary where keys are men and values are dictionaries of their valuations for each woman.
+    women_valuations (dict): A dictionary where keys are women and values are dictionaries of their valuations for each man.
+    
+    Returns:
+    dict: A dictionary representing the Nash stable matching, where keys are men and values are their matched women.
+    """
+    
+    # Create the LP problem
+    prob = pulp.LpProblem("Nash_Stable_Matching", pulp.LpMaximize)
+    
+    men = list(men_valuations.keys())
+    women = list(women_valuations.keys())
+    
+    # Create binary variables for each possible pairing
+    x = pulp.LpVariable.dicts("match", ((m, w) for m in men for w in women), cat='Binary')
+    
+    # Create continuous variables for the log of utilities
+    log_utility = pulp.LpVariable.dicts("log_utility", ((m, w) for m in men for w in women), lowBound=None)
+    
+    # Objective function: maximize sum of log utilities (equivalent to maximizing product of utilities)
+    prob += pulp.lpSum(log_utility[m, w] for m in men for w in women)
+    
+    # Constraint: Each person is matched to exactly one partner
+    for m in men:
+        prob += pulp.lpSum(x[m, w] for w in women) == 1
+    
+    for w in women:
+        prob += pulp.lpSum(x[m, w] for m in men) == 1
+    
+    # Stability constraints
+    for m in men:
+        for w in women:
+            for m2 in men:
+                if m2 != m:
+                    prob += x[m, w] + x[m2, w] + pulp.lpSum(x[m, w2] for w2 in women if men_valuations[m][w2] > men_valuations[m][w]) + \
+                            pulp.lpSum(x[m2, w2] for w2 in women if women_valuations[w][m2] > women_valuations[w][m]) >= 1
+    
+    # Logarithmic utility constraints
+    for m in men:
+        for w in women:
+            total_value = men_valuations[m][w] + women_valuations[w][m]
+            if total_value > 0:
+                prob += log_utility[m, w] <= math.log(total_value) + 1000 * (x[m, w] - 1)
+                prob += log_utility[m, w] >= math.log(total_value) - 1000 * (1 - x[m, w])
+            else:
+                prob += log_utility[m, w] <= -1000 * (1 - x[m, w])
+                prob += log_utility[m, w] >= -1000 * x[m, w]
+    
+    # Solve the problem
+    prob.solve(pulp.PULP_CBC_CMD(msg=False))
+    
+    # Extract the solution
+    matching = {m: next(w for w in women if x[m, w].value() > 0.5) for m in men}
+    
+    return matching
 #------------------------------------------------------------------------------------------------------------
 ##Sex-Equal Stable Matching
 
