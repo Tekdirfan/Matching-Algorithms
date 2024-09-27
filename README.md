@@ -16,7 +16,7 @@ This project implements a variety of matching algorithms, including the Deferred
   - [Serial Dictatorship](#serial-dictatorship)
   - [Random Serial Dictatorship](#random-serial-dictatorship)
   - [Linear Programming Algorithms with Stability Constraint](#linear-programming-algorithms-with-stability-constraint)
-    - [Random Stable Matching](#random-stable-matching)
+    - [Stable Matching via Linear Programming](#stable-matching-via-linear-programming)
     - [Egalitarian Stable Matching](#egalitarian-stable-matching)
     - [Nash Stable Matching](#nash-welfare-stable-matching)
     - [Utilitarian Stable Matching](#utilitarian-stable-matching)
@@ -173,37 +173,76 @@ The RSD mechanism is particularly effective in educational contexts, such as sch
 
 ### Linear Programming Algorithms with Stability Constraint
 
-#### Random Stable Matching 
+# Stable Matching via Linear Programming
 
-The Stable Matching algorithm based on linear programming finds a solution where no pair of participants prefer each other over their assigned matches. It is often used for problems such as marriage matching and student-school assignment.
+## Overview
 
-To find a stable matching using linear programming, we solve the following LP formulation:
+This approach uses linear programming to find a stable matching in the classic stable marriage problem. It formulates the stability constraints and matching requirements as a set of linear inequalities, allowing us to find a stable matching efficiently using standard linear programming solvers.
 
-$$
-\text{Maximize} \sum_{i,j} x_{ij} u_{ij}
-$$
+## Mathematical Formulation
 
-subject to the constraints:
-
-1. Each participant is assigned to at most one match:
+Let $x_{ij}$ be a binary variable indicating whether man $i$ is matched with woman $j$. The linear program can be formulated as follows:
 
 $$
-\sum_{j} x_{ij} \leq 1 \quad \forall i
+\text{maximize} \quad \sum_{i=1}^n \sum_{j=1}^n x_{ij}
 $$
 
-2. Each match is stable, meaning that there is no blocking pair $(i,j)$ such that both would prefer to be matched with each other over their current assignments:
+
+subject to:
 
 $$
-x_{ij} + x_{ji} \leq 1 \quad \forall (i,j)
+\sum_{j=1}^n x_{ij} = 1 \quad \forall i \in \{1, \ldots, n\}
 $$
 
-3. All assignment variables are binary:
 
 $$
-x_{ij} \in \{0, 1\}
+\sum_{i=1}^n x_{ij} = 1 \quad \forall j \in \{1, \ldots, n\}
 $$
 
-Here, $x_{ij}$ is a binary variable indicating whether participant $i$ is matched to participant $j$, and $u_{ij}$ represents the utility or preference of participant $i$ for participant $j$.
+
+$$
+x_{ij} + \sum_{k: w_j \text{ prefers } m_k \text{ to } m_i} x_{kj} + \sum_{l: m_i \text{ prefers } w_l \text{ to } w_j} x_{il} \geq 1 \quad \forall i,j \in \{1, \ldots, n\}
+$$
+
+
+$$
+x_{ij} \in \{0, 1\} \quad \forall i,j \in \{1, \ldots, n\}
+$$
+
+
+Where:
+- $n$ is the number of men (equal to the number of women)
+- $x_{ij}$ is 1 if man $i$ is matched with woman $j$, and 0 otherwise
+- The first two constraints ensure that each person is matched exactly once
+- The third constraint ensures stability: for each potential pair $(i,j)$, either they are matched, or at least one of them is matched to someone they prefer
+
+## Implementation
+
+The algorithm is implemented in Python using the PuLP library for linear programming. It sets up the linear program based on the preference lists of men and women, solves it, and extracts the stable matching from the solution.
+
+## Usage
+
+To use the algorithm, provide dictionaries representing the preferences of men and women. The output will be a dictionary indicating the matched pairs.
+
+```python
+men_prefs = {
+    'M1': ['W1', 'W2', 'W3'],
+    'M2': ['W2', 'W1', 'W3'],
+    'M3': ['W3', 'W1', 'W2']
+}
+
+women_prefs = {
+    'W1': ['M2', 'M1', 'M3'],
+    'W2': ['M1', 'M2', 'M3'],
+    'W3': ['M3', 'M2', 'M1']
+}
+
+matching = stable_matching_lp(men_prefs, women_prefs)
+print("Stable Matching:")
+for man, woman in matching.items():
+    print(f"{man} - {woman}")
+```
+
 
 # Egalitarian Stable Matching
 
@@ -278,13 +317,154 @@ for man, woman in matching.items():
 ```
 
 
-#### Nash Stable Matching
+# Nash Stable Matching
 
-The Nash Welfare Stable Matching algorithm aims to maximize the product of the utilities (or satisfaction) of all participants in the matching. It is a fairness criterion that balances equity and efficiency in matching outcomes.
+## Overview
 
-#### Utilitarian Stable Matching
+The **Nash Stable Matching** algorithm finds a stable matching that maximizes the product of utilities (Nash social welfare) across all participants, while maintaining stability. This approach aims to produce a "fair" and efficient matching by balancing individual utilities in a multiplicative way. The algorithm is implemented using linear programming with a logarithmic transformation.
 
-The Utilitarian Stable Matching algorithm focuses on maximizing the total utility (or satisfaction) of all participants. It seeks to produce a socially optimal matching where the sum of everyone's satisfaction is maximized.
+## Mathematical Formulation
+
+The objective function for the Nash Stable Matching problem can be formulated as follows:
+
+$$
+\text{maximize} \quad \prod_{(\ell,r) \in L \times R} v(\ell,r)^{\mu_{\ell,r}}
+$$
+
+
+which is equivalent to maximizing:
+
+$$
+\text{maximize} \quad \sum_{(\ell,r) \in L \times R} \mu_{\ell,r} \log v(\ell,r)
+$$
+
+
+subject to:
+
+$$
+\sum_{r \in R} \mu_{\ell,r} = 1 \quad \forall \, \ell \in L
+$$
+
+
+$$
+\sum_{\ell \in L} \mu_{\ell,r} = 1 \quad \forall \, r \in R
+$$
+
+
+$$
+\mu_{\ell,r} + \sum_{s \in R: \, v(\ell,s) > v(\ell,r)} \mu_{\ell,s} + \sum_{k \in L: \, v(k,r) > v(\ell,r)} \mu_{k,r} \geq 1 \quad \forall \, (\ell,r) \in L \times R
+$$
+
+
+$$
+\mu_{\ell,r} \geq 0 \quad \forall \, (\ell,r) \in L \times R
+$$
+
+
+Where:
+- $$L$$ and $$R$$ are the two sets of participants to be matched.
+- $$v(\ell,r)$$ is the valuation that participant $$\ell$$ assigns to being matched with participant $$r$$.
+- $$\mu_{\ell,r}$$ is a binary variable indicating whether participant $$\ell$$ and participant $$r$$ are matched.
+
+This formulation maximizes the product of valuations (Nash social welfare) while ensuring that each participant is matched exactly once and that the matching is stable. The logarithmic transformation allows us to solve this as a linear programming problem.
+
+## Implementation
+
+The algorithm is implemented in Python using the PuLP library for linear programming. The logarithmic transformation is used to convert the product maximization into a sum maximization, which can be solved using standard linear programming techniques.
+
+## Usage
+
+To use the algorithm, provide dictionaries representing the valuations of participants for each other. The output will be a dictionary indicating the matched pairs.
+
+```python
+men_valuations = {
+    'M1': {'W1': 10, 'W2': 5, 'W3': 3},
+    'M2': {'W1': 4, 'W2': 8, 'W3': 6},
+    'M3': {'W1': 7, 'W2': 6, 'W3': 9}
+}
+
+women_valuations = {
+    'W1': {'M1': 8, 'M2': 6, 'M3': 4},
+    'W2': {'M1': 5, 'M2': 9, 'M3': 7},
+    'W3': {'M1': 3, 'M2': 5, 'M3': 10}
+}
+
+matching = nash_stable_matching(men_valuations, women_valuations)
+print("Nash Stable Matching:")
+for man, woman in matching.items():
+    print(f"{man} - {woman}")
+```
+
+# Utilitarian Stable Matching
+
+## Overview
+
+The **Utilitarian Stable Matching** algorithm finds a stable matching that maximizes the total utility (or valuation) across all participants. It aims to produce the most "efficient" matching by maximizing the sum of valuations for all matched pairs, while still maintaining stability. This algorithm is implemented using linear programming.
+
+## Mathematical Formulation
+
+The objective function for the Utilitarian Stable Matching problem can be formulated as follows:
+
+$$
+\text{maximize} \quad \sum_{(\ell,r) \in L \times R} v(\ell,r) \cdot \mu_{\ell,r}
+$$
+
+
+subject to:
+
+$$
+\sum_{r \in R} \mu_{\ell,r} = 1 \quad \forall \, \ell \in L
+$$
+
+
+$$
+\sum_{\ell \in L} \mu_{\ell,r} = 1 \quad \forall \, r \in R
+$$
+
+
+$$
+\mu_{\ell,r} + \sum_{s \in R: \, v(\ell,s) > v(\ell,r)} \mu_{\ell,s} + \sum_{k \in L: \, v(k,r) > v(\ell,r)} \mu_{k,r} \geq 1 \quad \forall \, (\ell,r) \in L \times R
+$$
+
+
+$$
+\mu_{\ell,r} \geq 0 \quad \forall \, (\ell,r) \in L \times R
+$$
+
+
+Where:
+- $$L$$ and $$R$$ are the two sets of participants to be matched.
+- $$v(\ell,r)$$ is the valuation that participant $$\ell$$ assigns to being matched with participant $$r$$.
+- $$\mu_{\ell,r}$$ is a binary variable indicating whether participant $$\ell$$ and participant $$r$$ are matched.
+
+This formulation maximizes the sum of valuations while ensuring that each participant is matched exactly once and that the matching is stable. The algorithm produces a matching that is both stable and Pareto efficient.
+
+## Implementation
+
+The algorithm has been implemented in Python using the PuLP library for linear programming. You can use this implementation to find utilitarian stable matchings based on given valuations.
+
+## Usage
+
+To use the algorithm, provide dictionaries representing the valuations of men and women for each other. The output will be a dictionary indicating the matched pairs.
+
+```python
+men_valuations = {
+    'M1': {'W1': 10, 'W2': 5, 'W3': 3},
+    'M2': {'W1': 4, 'W2': 8, 'W3': 6},
+    'M3': {'W1': 7, 'W2': 6, 'W3': 9}
+}
+
+women_valuations = {
+    'W1': {'M1': 8, 'M2': 6, 'M3': 4},
+    'W2': {'M1': 5, 'M2': 9, 'M3': 7},
+    'W3': {'M1': 3, 'M2': 5, 'M3': 10}
+}
+
+matching = utilitarian_stable_matching(men_valuations, women_valuations)
+print("Utilitarian Stable Matching:")
+for man, woman in matching.items():
+    print(f"{man} - {woman}")
+```
 
 ### Linear Programming Algorithms without Stability Constraint
 
