@@ -518,7 +518,7 @@ women_prefs = {
 }
 
 matching = egalitarian_stable_matching(men_prefs, women_prefs)
-print("Egalitarian Matching:")
+print("Egalitarian Stable Matching:")
 for man, woman in matching.items():
     print(f"{man} - {woman}")
 ```
@@ -883,6 +883,42 @@ for man, woman in matching.items():
     print(f"{man} - {woman}")everyone's satisfaction is maximized without stability constraint.
 ```
 
+## Helper Functions
+
+# Generate Instance
+
+This helper function for generating instances of matching markets. The function `generate_instance` can create preferences or valuations for both marriage markets and school choice problems, with options for cardinal or ordinal preferences.
+
+## Parameters
+
+- num_agents (int): Number of agents on each side of the market (or number of students for school choice)
+- is_marriage_market (bool): If True, generates for marriage market. If False, generates for school choice.
+- is_cardinal (bool): If True, generates cardinal valuations. If False, generates ordinal preferences.
+
+## Returns
+
+- For marriage market: A tuple of two dictionaries (men_preferences, women_preferences)
+- For school choice: A tuple of two dictionaries and one dictionary (student_preferences, school_preferences, school_capacities)
+
+## Usage
+
+1. Generate preferences for a marriage market with ordinal preferences:
+```python
+men_prefs, women_prefs = populate_preferences(10, is_marriage_market=True, is_cardinal=False)
+```
+
+2. Generate cardinal valuations for a marriage market:
+```python
+men_vals, women_vals = populate_preferences(10, is_marriage_market=True, is_cardinal=True)
+```
+3. Generate preferences and capacities for a school choice problem:
+```python
+student_prefs, school_prefs, school_caps = populate_preferences(100, is_marriage_market=False, is_cardinal=False)
+```
+4. Generate cardinal valuations for a school choice problem:
+```python
+student_vals, school_vals, school_caps = populate_preferences(100, is_marriage_market=False, is_cardinal=True)
+```
 ## Contributing
 
 Contributions are welcome! Please feel free to submit a pull request or open an issue for any suggestions or improvements.

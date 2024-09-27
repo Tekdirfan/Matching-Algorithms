@@ -554,8 +554,6 @@ def utilitarian_stable_matching(men_valuations, women_valuations):
 ##Linear Programming Algorithms without Stability Constraints
 
 ##Egalitarian Matching
-import pulp
-
 def egalitarian_matching(men_prefs, women_prefs):
     """
     Implements the Egalitarian matching algorithm without stability constraints.
@@ -696,34 +694,66 @@ def utilitarian_matching(men_valuations, women_valuations):
 #------------------------------------------------------------------------------------------------------------
 ##Helper Functions
 
-def populate_preferences(num_men):
+import random
+import random
+
+def generate_instance(num_agents, is_marriage_market=True, is_cardinal=False):
     """
-    Generates random preference lists for a given number of men and women assuming
-    that the number of men and the number of women are equal.
+    Generates random preference lists or valuations for a given number of agents in a matching market.
+    For school choice, also generates random capacities for schools.
     
     Args:
-    num_men(int): Number of men/women
-    
+    num_agents (int): Number of agents on each side of the market (or number of students for school choice)
+    is_marriage_market (bool): If True, generates for marriage market. If False, generates for school choice.
+    is_cardinal (bool): If True, generates cardinal valuations. If False, generates ordinal preferences.
     
     Returns:
-    tuple: Two dictionaries (men_preferences, women_preferences)
+    tuple: Two dictionaries (side1_preferences, side2_preferences) and a dictionary of school capacities if applicable
     """
     
-    # Generate lists of men and women
-    men = [f'M{i+1}' for i in range(num_men)]
-    women = [f'W{i+1}' for i in range(num_men)]
+    # Generate lists of agents
+    if is_marriage_market:
+        side1 = [f'M{i+1}' for i in range(num_agents)]
+        side2 = [f'W{i+1}' for i in range(num_agents)]
+    else:
+        side1 = [f'S{i+1}' for i in range(num_agents)]
+        num_schools = max(1, num_agents // 2)  # Ensure at least 1 school
+        side2 = [f'C{i+1}' for i in range(num_schools)]
     
-    # Generate preferences for men
-    men_preferences = {}
-    for man in men:
-        men_preferences[man] = random.sample(women, len(women))
+    # Generate preferences or valuations for side1
+    side1_preferences = {}
+    for agent in side1:
+        if is_cardinal:
+            side1_preferences[agent] = {partner: random.uniform(0, 100) for partner in side2}
+        else:
+            side1_preferences[agent] = random.sample(side2, len(side2))
     
-    # Generate preferences for women
-    women_preferences = {}
-    for woman in women:
-        women_preferences[woman] = random.sample(men, len(men))
+    # Generate preferences or valuations for side2
+    side2_preferences = {}
+    for agent in side2:
+        if is_cardinal:
+            side2_preferences[agent] = {partner: random.uniform(0, 100) for partner in side1}
+        else:
+            side2_preferences[agent] = random.sample(side1, len(side1))
     
-    return men_preferences, women_preferences
+    # Generate school capacities for school choice scenario
+    if not is_marriage_market:
+        total_capacity = random.randint(num_agents // 2, num_agents - 1)  # Ensure total capacity is less than num_agents
+        school_capacities = {}
+        remaining_capacity = total_capacity
+        for school in side2[:-1]:  # Distribute capacity to all schools except the last one
+            if remaining_capacity > 0:
+                capacity = random.randint(1, remaining_capacity)
+                school_capacities[school] = capacity
+                remaining_capacity -= capacity
+            else:
+                school_capacities[school] = 0
+        school_capacities[side2[-1]] = remaining_capacity  # Assign remaining capacity to the last school
+        
+        return side1_preferences, side2_preferences, school_capacities
+    
+    return side1_preferences, side2_preferences
+
 
 def is_stable(matching, men_preferences, women_preferences):
     """
