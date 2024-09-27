@@ -754,36 +754,41 @@ def generate_instance(num_agents, is_marriage_market=True, is_cardinal=False):
     return side1_preferences, side2_data
 
 
-def is_stable(matching, men_preferences, women_preferences):
+def is_stable(matching, side1_preferences, side2_preferences, is_cardinal=False):
     """
-    Check if a given matching is stable under the given preferences.
+    Check if a given matching is stable under the given preferences or valuations.
     
     Args:
-    matching (dict): A dictionary representing the matching, where keys are men and values are their matched women.
-    men_preferences (dict): A dictionary where keys are men and values are lists of women in order of preference.
-    women_preferences (dict): A dictionary where keys are women and values are lists of men in order of preference.
+    matching (dict): A dictionary representing the matching, where keys are side1 agents and values are their matched side2 agents.
+    side1_preferences (dict): A dictionary where keys are side1 agents and values are either lists (ordinal) or dicts (cardinal) of side2 agents.
+    side2_preferences (dict): A dictionary where keys are side2 agents and values are either lists (ordinal) or dicts (cardinal) of side1 agents.
+    is_cardinal (bool): If True, preferences are cardinal valuations. If False, preferences are ordinal.
     
     Returns:
     bool: True if the matching is stable, False otherwise.
     """
     
-    def prefers(person, new_partner, current_partner, preferences):
-        """Helper function to check if a person prefers new_partner over current_partner."""
-        return preferences[person].index(new_partner) < preferences[person].index(current_partner)
+    def prefers(agent, new_partner, current_partner, preferences):
+        """Helper function to check if an agent prefers new_partner over current_partner."""
+        if is_cardinal:
+            return preferences[agent][new_partner] > preferences[agent][current_partner]
+        else:
+            return preferences[agent].index(new_partner) < preferences[agent].index(current_partner)
     
-    for man, woman in matching.items():
-        man_prefs = men_preferences[man]
-        current_rank = man_prefs.index(woman)
+    for side1_agent, side2_agent in matching.items():
+        if is_cardinal:
+            current_value = side1_preferences[side1_agent][side2_agent]
+            better_options = [partner for partner, value in side1_preferences[side1_agent].items() if value > current_value]
+        else:
+            current_rank = side1_preferences[side1_agent].index(side2_agent)
+            better_options = side1_preferences[side1_agent][:current_rank]
         
-        # Check if man prefers any woman over his current partner
-        for preferred_woman in man_prefs[:current_rank]:
-            preferred_woman_partner = next(m for m, w in matching.items() if w == preferred_woman)
+        for preferred_partner in better_options:
+            preferred_partner_match = next(s1 for s1, s2 in matching.items() if s2 == preferred_partner)
             
-            # If the preferred woman also prefers this man over her current partner, it's unstable
-            if prefers(preferred_woman, man, preferred_woman_partner, women_preferences):
-                print(f"Instability found: {man} and {preferred_woman} prefer each other over their current partners.")
+            if prefers(preferred_partner, side1_agent, preferred_partner_match, side2_preferences):
+                print(f"Instability found: {side1_agent} and {preferred_partner} prefer each other over their current partners.")
                 return False
     
-    # If we've checked all pairs and found no instabilities, the matching is stable
     return True
 
