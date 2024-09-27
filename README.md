@@ -22,6 +22,7 @@ This project implements a variety of matching algorithms, including the Deferred
     - [Egalitarian Matching](#egalitarian-matching)
     - [Nash Matching](#nash-matching)
     - [Utilitarian Matching](#utilitarian-matching)
+- [Helper Functions](#helper-functions)
 - [Contributing](#contributing)
 - [License](#license)
 
