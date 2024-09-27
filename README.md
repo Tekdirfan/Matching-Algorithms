@@ -63,9 +63,8 @@ The algorithm proceeds in rounds:
 3. Rejected participants propose to their next most-preferred partner in the next round.
 4. The process continues until no more proposals are made, and the tentative matches become final.
 
-## Implementation
+## Characteristics
 
-The algorithm is implemented in Python, using dictionaries to represent preferences and matches.
 
 ## Usage
 
@@ -110,23 +109,9 @@ The **School Choice Deferred Acceptance** algorithm adapts the classic Deferred 
 5. Rejected students propose to their next most-preferred school in subsequent rounds.
 6. The process continues until no more students are proposing, and tentative assignments become final.
 
-## Mathematical Formulation
+## Characteristics
 
-Let $S$ be the set of students and $C$ be the set of schools. For each student $s \in S$, let $P_s$ be their preference list over schools. For each school $c \in C$, let $\succ_c$ be its priority ordering over students, and $q_c$ its capacity.
-
-The algorithm proceeds in rounds:
-
-1. In each round $t$:
-   - Each unassigned student $s$ proposes to their most preferred school $c$ that hasn't rejected them yet.
-   - Each school $c$ considers all proposals received, including students tentatively assigned from previous rounds.
-   - School $c$ tentatively accepts the top $q_c$ students according to $\succ_c$ and rejects the rest.
-
-2. The algorithm terminates when no student is rejected in a round.
-
-## Implementation
-
-Here's a Python implementation of the School Choice Deferred Acceptance algorithm:
-
+## Usage
 ```python
 # Example usage
 students = {
@@ -169,7 +154,7 @@ The mechanism works as follows:
 - Simple to understand and implement.
 - May lead to unstable matchings.
 
-## Implementation
+## Usage
 
 ```python
 # Example usage:
@@ -214,31 +199,10 @@ The Top Trading Cycles (TTC) algorithm is an efficient and strategy-proof mechan
 4. Remove these students and reduce the capacity of the schools by the number of students assigned to them.
 5. Repeat steps 1-4 until all students are assigned or no more cycles can be formed.
 
-## Mathematical Formulation
 
-While TTC is typically described as an algorithmic process rather than an optimization problem, we can represent its outcome using binary variables:
+## Characteristics
 
-Let $x_{i,j}$ be 1 if student $i$ is assigned to school $j$, and 0 otherwise.
-
-The TTC outcome satisfies:
-
-$$
-\sum_{j \in S} x_{i,j} = 1 \quad \forall i \in N
-$$
-
-
-$$
-\sum_{i \in N} x_{i,j} \leq q_j \quad \forall j \in S
-$$
-
-
-Where $N$ is the set of students, $S$ is the set of schools, and $q_j$ is the capacity of school $j$.
-
-The TTC algorithm ensures these constraints are met while achieving Pareto efficiency.
-
-## Implementation
-
-Here's a basic implementation of TTC for school choice:
+## Usage
 
 ```python
 # Example usage:
@@ -277,6 +241,9 @@ The Serial Dictatorship mechanism is a priority-based allocation method where pa
 
 4. **Final Allocation:** The process continues until all participants have made their selections or all options have been allocated.
 
+## Characteristics
+
+## Usage
 ```python
 # Define student preferences
 students = {
@@ -318,25 +285,7 @@ The Random Serial Dictatorship (RSD) mechanism is a variation of the Serial Dict
 
 3. **Allocation:** The process continues until all participants have made their selections or all options have been allocated.
 
-## Key Properties
-
-- **Strategy-proof:** Participants have no incentive to misrepresent their preferences.
-- **Ex-post Pareto efficient:** The resulting allocation is always Pareto efficient.
-- **Fair ex-ante:** Due to the random ordering, all participants have an equal chance of being in any position in the selection order.
-
-#### How It Works:
-
-1. **Random Order Generation:** At the beginning of the allocation process, a random order is generated for all participants. This order dictates the sequence in which participants will choose their preferred options.
-
-2. **Choice Process:** Similar to the Serial Dictatorship mechanism, each participant selects their most preferred available option in the order determined by the random draw. The participant with the highest priority (based on the random order) chooses first, followed by the next participant, and so on.
-
-3. **Subsequent Choices:** As each participant makes their selection, options become unavailable to those who choose later. The process continues until all participants have selected their options or all available options have been allocated.
-
-4. **Fairness:** The Random Serial Dictatorship mechanism aims to create a fairer allocation process by giving each participant an equal chance of being chosen first, thereby reducing the potential inequalities that might arise from a fixed priority order. 
-
-5. **Strategy-Proofness:** Like its predecessor, RSD is strategy-proof, meaning participants have no incentive to misrepresent their preferences, as their best outcomes are achieved by honestly selecting their most preferred options available at their turn.
-
-The RSD mechanism is particularly effective in educational contexts, such as school assignments, where fairness and transparency in the selection process are essential.
+## Characteristics
 
 ## Usage
 ```python
