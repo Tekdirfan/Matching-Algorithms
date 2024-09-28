@@ -77,6 +77,24 @@ The algorithm proceeds in rounds:
 
 - `dict`: A dictionary representing the stable matching, where keys are proposers and values are their matched partners.
 
+## Runtime Table:
+
++-----------------------------+-----------------------------+
+|   Number of Agents per Side |   Average Runtime (seconds) |
++=============================+=============================+
+|                          10 |                    6.1e-05  |
++-----------------------------+-----------------------------+
+|                          50 |                    0.001204 |
++-----------------------------+-----------------------------+
+|                          90 |                    0.003758 |
++-----------------------------+-----------------------------+
+|                         130 |                    0.009415 |
++-----------------------------+-----------------------------+
+|                         170 |                    0.016016 |
++-----------------------------+-----------------------------+
+|                         210 |                    0.022751 |
++-----------------------------+-----------------------------+
+
 ## Usage
 ```python
 from matching_algorithms import deferred_acceptance
@@ -622,7 +640,7 @@ The algorithm has been implemented in Python using the PuLP library for linear p
 - dict
   - A dictionary representing the Egalitarian stable matching, where keys are men and values are their matched women.
 
-  
+
 
 ## Usage
 
