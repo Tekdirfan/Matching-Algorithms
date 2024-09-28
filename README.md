@@ -87,6 +87,7 @@ The algorithm proceeds in rounds:
 | 170                       | 0.016767                  |
 | 210                       | 0.028463                  |
 
+![Deferred Acceptance Algorithm Runtime](images/da_runtime.png)
 
 ## Usage
 ```python
