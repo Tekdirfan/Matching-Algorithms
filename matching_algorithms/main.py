@@ -400,16 +400,25 @@ def stable_matching_lp(men_prefs, women_prefs):
 #------------------------------------------------------------------------------------------------------------
 ##Egalitarian Stable Matching 
 
-def egalitarian_stable_matching(men_preferences, women_preferences):
+def egalitarian_stable_matching(men_prefs, women_prefs):
+    """
+    Finds a stable matching that minimizes the sum of preference ranks for all participants among all possible stable matchings, using linear programming.
+    Args:
+    men_prefs (dict): A dictionary where keys are men and values are lists of women in order of preference.
+    women_prefs (dict): A dictionary where keys are women and values are lists of men in order of preference.
+    
+    Returns:
+    dict: A dictionary representing the Egalitarian stable matching, where keys are men and values are their matched women.
+    """
     prob = pulp.LpProblem("Egalitarian_Stable_Matching", pulp.LpMinimize)
     
-    men = list(men_preferences.keys())
-    women = list(women_preferences.keys())
+    men = list(men_prefs.keys())
+    women = list(women_prefs.keys())
     
     x = pulp.LpVariable.dicts("match", ((m, w) for m in men for w in women), lowBound=0, upBound=1, cat='Continuous')
     
     prob += pulp.lpSum(
-        (men_preferences[m].index(w) + women_preferences[w].index(m)) * x[(m, w)]
+        (men_prefs[m].index(w) + women_prefs[w].index(m)) * x[(m, w)]
         for m in men for w in women
     )
     
@@ -423,8 +432,8 @@ def egalitarian_stable_matching(men_preferences, women_preferences):
         for w in women:
             prob += (
                 x[(m, w)] +
-                pulp.lpSum(x[(m, w2)] for w2 in women if men_preferences[m].index(w2) < men_preferences[m].index(w)) +
-                pulp.lpSum(x[(m2, w)] for m2 in men if women_preferences[w].index(m2) < women_preferences[w].index(m))
+                pulp.lpSum(x[(m, w2)] for w2 in women if men_prefs[m].index(w2) < men_prefs[m].index(w)) +
+                pulp.lpSum(x[(m2, w)] for m2 in men if women_prefs[w].index(m2) < women_prefs[w].index(m))
                 >= 1
             )
     

@@ -609,6 +609,20 @@ This formulation minimizes the sum of ranks while ensuring that each participant
 
 The algorithm has been implemented in Python using the PuLP library for linear programming. You can use this implementation to find egalitarian stable matchings based on given preferences.
 
+## Parameters
+
+- `men_prefs` : dict
+  - A dictionary where keys are men and values are lists of women in order of preference.
+
+- `women_prefs` : dict
+  - A dictionary where keys are women and values are lists of men in order of preference.
+
+## Returns
+
+- dict
+  - A dictionary representing the Egalitarian stable matching, where keys are men and values are their matched women.
+
+  
 
 ## Usage
 
@@ -853,6 +867,18 @@ This formulation minimizes the sum of ranks for all matched pairs, ensuring that
 
 The algorithm is implemented in Python using the PuLP library for linear programming. It directly minimizes the sum of ranks without considering stability constraints.
 
+## Parameters
+
+- `men_prefs` : dict
+  - A dictionary where keys are men and values are lists of women in order of preference.
+- `women_prefs` : dict
+  - A dictionary where keys are women and values are lists of men in order of preference.
+
+## Returns
+
+- dict
+  - A dictionary representing the egalitarian matching, where keys are men and values are their matched women.
+
 ## Usage
 
 ```python
@@ -926,6 +952,18 @@ The algorithm is implemented in Python using the PuLP library for linear program
 - Logarithmic utility constraints to handle the product maximization.
 - No stability constraints, focusing solely on maximizing the Nash social welfare.
 
+## Parameters
+
+- `men_valuations` : dict
+  - A dictionary where keys are men and values are dictionaries of their valuations for each woman.
+- `women_valuations` : dict
+  - A dictionary where keys are women and values are dictionaries of their valuations for each man.
+
+## Returns
+
+- dict
+  - A dictionary representing the Nash matching, where keys are men and values are their matched women.
+
 ## Usage
 
 ```python
@@ -990,6 +1028,15 @@ This formulation maximizes the sum of utilities for all matched pairs, ensuring 
 ## Implementation
 
 The algorithm is implemented in Python using the PuLP library for linear programming. It directly maximizes the sum of utilities without considering stability constraints.
+
+## Parameters
+
+- `men_valuations` (dict): A dictionary where keys are men and values are dictionaries of their valuations for each woman.
+- `women_valuations` (dict): A dictionary where keys are women and values are dictionaries of their valuations for each man.
+
+## Returns
+
+- `dict`: A dictionary representing the utilitarian matching, where keys are men and values are their matched women.
 
 ## Usage
 
