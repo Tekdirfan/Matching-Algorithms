@@ -164,7 +164,8 @@ from matching_algorithms import school_choice_da
 students = {
     'Alice': ['School1', 'School2', 'School3'],
     'Bob': ['School2', 'School1', 'School3'],
-    'Charlie': ['School1', 'School3', 'School2']
+    'Charlie': ['School1', 'School3', 'School2'],
+    'David': ['School3', 'School1', 'School2']
 }
 
 schools = {
@@ -1073,63 +1074,75 @@ for man, woman in matching.items():
 ```
 
 ## Helper Functions
-
 # Generate Instance
 
 This helper function generates instances of matching markets. The function `generate_instance` can create preferences or valuations for both marriage markets and school choice problems, with options for cardinal or ordinal preferences.
 
 ## Parameters
 
-- `num_agents` (int): Number of agents on each side of the market (or number of students for school choice)
+- `num_agents` (int): Number of agents on each side of the market (or number of students for school choice).
+- `num_schools` (int, optional): Number of schools for school choice. Default is `num_agents // 2`. Cannot be less than 2 or greater than `num_agents`.
 - `is_marriage_market` (bool): If True, generates for marriage market. If False, generates for school choice.
 - `is_cardinal` (bool): If True, generates cardinal valuations. If False, generates ordinal preferences.
 
 ## Returns
 
-- For marriage market: A tuple of two dictionaries (men_preferences, women_preferences)
-- For school choice: A tuple of two dictionaries (student_preferences, school_data)
-  - `school_data` contains both priorities and capacities for each school
+- For marriage market: A tuple of two dictionaries (men_preferences, women_preferences).
+- For school choice: A tuple of two dictionaries (student_preferences, school_data).
+  - `school_data` contains both priorities and capacities for each school.
 
 ## Usage
 
 1. Generate preferences for a marriage market with ordinal preferences:
-```python
-from matching_algorithms import generate_instance
+    ```python
+    from matching_algorithms import generate_instance
 
-men_prefs, women_prefs = generate_instance(10, is_marriage_market=True, is_cardinal=False)
-```
+    men_prefs, women_prefs = generate_instance(10, is_marriage_market=True, is_cardinal=False)
+    ```
 
 2. Generate cardinal valuations for a marriage market:
-```python
-from matching_algorithms import generate_instance
+    ```python
+    from matching_algorithms import generate_instance
 
-men_vals, women_vals = generate_instance(10, is_marriage_market=True, is_cardinal=True)
-```
+    men_vals, women_vals = generate_instance(10, is_marriage_market=True, is_cardinal=True)
+    ```
+
 3. Generate preferences and data for a school choice problem:
-```python
-from matching_algorithms import generate_instance
+    ```python
+    from matching_algorithms import generate_instance
 
-student_prefs, school_data = generate_instance(100, is_marriage_market=False, is_cardinal=False)
+    student_prefs, school_data = generate_instance(100, is_marriage_market=False, is_cardinal=False)
 
-# Accessing school priorities and capacities
-for school, data in school_data.items():
-    print(f"School {school}:")
-    print(f"  Priorities: {data['priorities']}")
-    print(f"  Capacity: {data['capacity']}")
-```
+    # Accessing school priorities and capacities
+    for school, data in school_data.items():
+        print(f"School {school}:")
+        print(f"  Priorities: {data['priorities']}")
+        print(f"  Capacity: {data['capacity']}")
+    ```
 
 4. Generate cardinal valuations for a school choice problem:
-```python
-from matching_algorithms import generate_instance
+    ```python
+    from matching_algorithms import generate_instance
 
-student_vals, school_data = generate_instance(100, is_marriage_market=False, is_cardinal=True)
+    student_vals, school_data = generate_instance(100, is_marriage_market=False, is_cardinal=True)
 
-# Accessing school valuations and capacities
-for school, data in school_data.items():
-    print(f"School {school}:")
-    print(f"  Valuations: {data['priorities']}")  # In this case, 'priorities' contains valuations
-    print(f"  Capacity: {data['capacity']}")
-```
+    # Accessing school valuations and capacities
+    for school, data in school_data.items():
+        print(f"School {school}:")
+        print(f"  Valuations: {data['priorities']}")  # In this case, 'priorities' contains valuations
+        print(f"  Capacity: {data['capacity']}")
+    ```
+
+5. Generate preferences and data for a school choice problem with a specific number of schools:
+    ```python
+    from matching_algorithms import generate_instance
+
+    student_prefs, school_data = generate_instance(100, num_schools=5, is_marriage_market=False, is_cardinal=False)
+
+    print(f"Number of schools: {len(school_data)}")
+    ```
+
+**Note:** For school choice problems, the total capacity of all schools is set to half the number of students, distributed as evenly as possible among the schools.
 
 # Is Stable
 
@@ -1163,8 +1176,8 @@ matching = {'M1': 'W1', 'M2': 'W2', ...}  # Complete this with your matching
 is_stable_result = is_stable(matching, men_prefs, women_prefs, is_cardinal=False)
 print(f"Is the matching stable? {is_stable_result}")
 ```
-```python
 2. Check stability with cardinal valuations:
+```python
 
 from matching_algorithms import is_stable, generate_instance
 

@@ -70,15 +70,14 @@ def deferred_acceptance(men_preferences, women_preferences, men_propose=True):
 
 #------------------------------------------------------------------------------------------------------------
 ##School Choice Deferred Acceptance
-
-def school_choice_da(schools, students, student_proposing=True):
+def school_choice_da(students, schools, student_proposing=True):
     """
     Implements the deferred acceptance algorithm for school choice.
     
     Args:
     schools (dict): A dictionary where keys are school names and values are dictionaries containing:
-                    'preferences': list of student names in order of preference
-                    'quota': integer representing the school's capacity
+                    'priorities': list of student names in order of priority
+                    'capacity': integer representing the school's capacity
     students (dict): A dictionary where keys are student names and values are lists of school names in order of preference
     student_proposing (bool): If True, students propose to schools. If False, schools propose to students. Default is True.
     
@@ -86,63 +85,85 @@ def school_choice_da(schools, students, student_proposing=True):
     dict: A dictionary representing the matching, where keys are school names and values are lists of assigned students
     """
     
+    # Expand schools with capacity > 1 into multiple "slots"
+    expanded_schools = {}
+    for school, info in schools.items():
+        for i in range(info['capacity']):
+            expanded_schools[f"{school}_{i+1}"] = {'priorities': info['priorities'], 'capacity': 1}
+    
+    # Adjust student preferences to include the new "slots"
+    expanded_students = {}
+    for student, prefs in students.items():
+        expanded_prefs = []
+        for school in prefs:
+            expanded_prefs.extend([f"{school}_{i+1}" for i in range(schools[school]['capacity'])])
+        expanded_students[student] = expanded_prefs
+    
     if student_proposing:
-        proposers = list(students.keys())
-        proposer_preferences = students
-        receivers = list(schools.keys())
-        receiver_preferences = {school: schools[school]['preferences'] for school in schools}
-        receiver_quotas = {school: schools[school]['quota'] for school in schools}
+        proposers = list(expanded_students.keys())
+        proposer_preferences = expanded_students
+        receivers = list(expanded_schools.keys())
+        receiver_priorities = {school: expanded_schools[school]['priorities'] for school in expanded_schools}
     else:
-        proposers = list(schools.keys())
-        proposer_preferences = {school: schools[school]['preferences'] for school in schools}
-        receivers = list(students.keys())
-        receiver_preferences = students
-        receiver_quotas = {school: schools[school]['quota'] for school in schools}
+        proposers = list(expanded_schools.keys())
+        proposer_preferences = {school: expanded_schools[school]['priorities'] for school in expanded_schools}
+        receivers = list(expanded_students.keys())
+        receiver_priorities = expanded_students
     
-    # Initialize all proposers as unmatched and all receivers as empty
-    unmatched_proposers = proposers.copy()
-    assignments = {receiver: [] for receiver in receivers}
+    # Initialize all proposers as free
+    free_proposers = proposers.copy()
+    engagements = {}
+    next_to_propose = {proposer: 0 for proposer in proposers}
     
-    while unmatched_proposers:
-        proposer = unmatched_proposers.pop(0)
+    # Continue while there are free proposers who still have receivers to propose to
+    while free_proposers:
+        proposer = free_proposers.pop(0)
+        
+        # Get the proposer's preference list
         proposer_prefs = proposer_preferences[proposer]
         
-        for receiver in proposer_prefs:
-            receiver_prefs = receiver_preferences[receiver]
-            current_assignments = assignments[receiver]
-            
-            if student_proposing:
-                quota = receiver_quotas[receiver]
-            else:
-                quota = 1  # When schools propose, each student can only be assigned to one school
-            
-            if len(current_assignments) < quota:
-                # Receiver has capacity, assign proposer
-                assignments[receiver].append(proposer)
-                break
-            else:
-                # Receiver is at capacity, check if proposer is preferred over any current assignment
-                worst_assigned = min(current_assignments, key=lambda x: receiver_prefs.index(x))
-                if receiver_prefs.index(proposer) < receiver_prefs.index(worst_assigned):
-                    # Replace worst assigned with current proposer
-                    assignments[receiver].remove(worst_assigned)
-                    assignments[receiver].append(proposer)
-                    unmatched_proposers.append(worst_assigned)
-                    break
+        # Check if the proposer has already proposed to everyone
+        if next_to_propose[proposer] >= len(proposer_prefs):
+            continue
+        
+        receiver = proposer_prefs[next_to_propose[proposer]]
+        next_to_propose[proposer] += 1
+        
+        # If the receiver is free, engage them
+        if receiver not in engagements.values():
+            engagements[proposer] = receiver
         else:
-            # Proposer couldn't be assigned to any receiver in their preference list
-            unmatched_proposers.append(proposer)
-    
-    if not student_proposing:
-        # Invert the assignments so that schools are keys and students are values
-        inverted_assignments = {school: [] for school in schools}
-        for student, assigned_schools in assignments.items():
-            for school in assigned_schools:
-                inverted_assignments[school].append(student)
-        assignments = inverted_assignments
-    
-    return assignments
+            # Find the current partner of the receiver
+            current_partner = [p for p, r in engagements.items() if r == receiver][0]
+            
+            # If the receiver prefers this proposer to their current partner
+            if receiver_priorities[receiver].index(proposer) < receiver_priorities[receiver].index(current_partner):
+                # Break the current engagement
+                del engagements[current_partner]
+                # Create the new engagement
+                engagements[proposer] = receiver
+                # Add the previous partner back to free proposers
+                free_proposers.append(current_partner)
+            else:
+                # If rejected, add the proposer back to free proposers
+                free_proposers.append(proposer)
 
+    # Combine the assignments for schools with multiple "slots"
+    final_assignments = {}
+    for proposer, receiver in engagements.items():
+        if student_proposing:
+            school = receiver.rsplit('_', 1)[0]
+            if school not in final_assignments:
+                final_assignments[school] = []
+            final_assignments[school].append(proposer)
+        else:
+            student = receiver
+            school = proposer.rsplit('_', 1)[0]
+            if school not in final_assignments:
+                final_assignments[school] = []
+            final_assignments[school].append(student)
+    
+    return final_assignments
 
 #------------------------------------------------------------------------------------------------------------
 ##Boston Mechanism
@@ -153,8 +174,8 @@ def boston_mechanism(students, schools):
     Args:
     students (dict): A dictionary where keys are student names and values are lists of school preferences.
     schools (dict): A dictionary where keys are school names and values are dictionaries containing:
-                    'capacity': integer representing the school's capacity
                     'priorities': list of student names in order of priority
+                    'capacity': integer representing the school's capacity
     
     Returns:
     dict: A dictionary representing the matching, where keys are student names and values are assigned schools.
@@ -709,13 +730,14 @@ def utilitarian_matching(men_valuations, women_valuations):
 ##Helper Functions
 import random
 
-def generate_instance(num_agents, is_marriage_market=True, is_cardinal=False):
+def generate_instance(num_agents, num_schools=None, is_marriage_market=True, is_cardinal=False):
     """
     Generates random preference lists or valuations for a given number of agents in a matching market.
     For school choice, also generates random capacities and priorities for schools.
     
     Args:
     num_agents (int): Number of agents on each side of the market (or number of students for school choice)
+    num_schools (int, optional): Number of schools for school choice. Default is num_agents // 2.
     is_marriage_market (bool): If True, generates for marriage market. If False, generates for school choice.
     is_cardinal (bool): If True, generates cardinal valuations. If False, generates ordinal preferences.
     
@@ -729,7 +751,9 @@ def generate_instance(num_agents, is_marriage_market=True, is_cardinal=False):
         side2 = [f'W{i+1}' for i in range(num_agents)]
     else:
         side1 = [f'S{i+1}' for i in range(num_agents)]
-        num_schools = max(1, num_agents // 2)  # Ensure at least 1 school
+        if num_schools is None:
+            num_schools = num_agents // 2
+        num_schools = max(2, min(num_schools, num_agents))  # Ensure at least 2 schools and not more than num_agents
         side2 = [f'C{i+1}' for i in range(num_schools)]
     
     # Generate preferences or valuations for side1
@@ -749,21 +773,20 @@ def generate_instance(num_agents, is_marriage_market=True, is_cardinal=False):
             else:
                 side2_data[agent] = random.sample(side1, len(side1))
     else:
-        total_capacity = random.randint(num_agents // 2, num_agents - 1)  # Ensure total capacity is less than num_agents
-        remaining_capacity = total_capacity
+        total_capacity = num_agents // 2  # Set total capacity to half of students
+        base_capacity = total_capacity // len(side2)  # Distribute capacity evenly
+        remaining_capacity = total_capacity % len(side2)  # Any leftover capacity
+        
         for school in side2:
             priorities = random.sample(side1, len(side1))
+            capacity = base_capacity
             if remaining_capacity > 0:
-                capacity = random.randint(1, remaining_capacity)
-                remaining_capacity -= capacity
-            else:
-                capacity = 0
+                capacity += 1
+                remaining_capacity -= 1
             side2_data[school] = {
                 "priorities": priorities,
                 "capacity": capacity
             }
-        # Assign any remaining capacity to the last school
-        side2_data[side2[-1]]["capacity"] += remaining_capacity
     
     return side1_preferences, side2_data
 
