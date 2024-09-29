@@ -301,28 +301,23 @@ def serial_dictatorship(students, schools, student_order):
     remaining_capacity = schools.copy()
     matching = {}
     
-    print("Student order:")
-    for i, student in enumerate(student_order, 1):
-        print(f"{i}. {student}")
-    
-    print("\nAssignment process:")
     # Let students choose in the given order
     for student in student_order:
         for school in students[student]:
             if remaining_capacity[school] > 0:
                 matching[student] = school
                 remaining_capacity[school] -= 1
-                print(f"{student} chooses {school}")
                 break
         else:
             # If no preferred school has capacity, assign to null school
             matching[student] = None
-            print(f"{student} remains unassigned")
     
     return matching
 
 #------------------------------------------------------------------------------------------------------------
 ##Random Serial Dictatorship
+import random
+
 def random_serial_dictatorship(students, schools):
     """
     Implements the Random Serial Dictatorship algorithm for school choice.
@@ -335,7 +330,7 @@ def random_serial_dictatorship(students, schools):
     dict: A dictionary representing the matching, where keys are student names and values are assigned schools.
     """
     
-    # Create a random ordering of students
+    # Create a random order of students
     student_order = list(students.keys())
     random.shuffle(student_order)
     
@@ -343,23 +338,16 @@ def random_serial_dictatorship(students, schools):
     remaining_capacity = schools.copy()
     matching = {}
     
-    print("Random student order:")
-    for i, student in enumerate(student_order, 1):
-        print(f"{i}. {student}")
-    
-    print("\nAssignment process:")
     # Let students choose in the random order
     for student in student_order:
         for school in students[student]:
             if remaining_capacity[school] > 0:
                 matching[student] = school
                 remaining_capacity[school] -= 1
-                print(f"{student} chooses {school}")
                 break
         else:
-            # If no preferred school has capacity, assign to null school
+            # If no preferred school has capacity, assign to None (unassigned)
             matching[student] = None
-            print(f"{student} remains unassigned")
     
     return matching
 

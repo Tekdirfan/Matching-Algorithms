@@ -501,7 +501,7 @@ This approach uses linear programming to find a stable matching in the classic s
 
 ## Mathematical Formulation
 
-Let $x_{ij}$ be a binary variable indicating whether man $i$ is matched with woman $j$. The linear program can be formulated as follows:
+Let \( x_{ij} \) be a binary variable indicating whether man \( i \) is matched with woman \( j \). The linear program can be formulated as follows:
 
 $$
 \text{maximize} \quad \sum_{i=1}^n \sum_{j=1}^n x_{ij}
@@ -521,7 +521,7 @@ $$
 
 
 $$
-x_{ij} + \sum_{k: w_j \text{ prefers } m_k \text{ to } m_i} x_{kj} + \sum_{l: m_i \text{ prefers } w_l \text{ to } w_j} x_{il} \geq 1 \quad \forall i,j \in \{1, \ldots, n\}
+x_{ij} + \sum_{k: m_k \succ_j m_i} x_{kj} + \sum_{k: w_k \succ_i w_j} x_{ik} \geq 1 \quad \forall i,j \in \{1, \ldots, n\}
 $$
 
 
@@ -531,10 +531,12 @@ $$
 
 
 Where:
-- $n$ is the number of men (equal to the number of women)
-- $x_{ij}$ is 1 if man $i$ is matched with woman $j$, and 0 otherwise
+- \( n \) is the number of men (equal to the number of women)
+- \( x_{ij} \) is 1 if man \( i \) is matched with woman \( j \), and 0 otherwise
 - The first two constraints ensure that each person is matched exactly once
-- The third constraint ensures stability: for each potential pair $(i,j)$, either they are matched, or at least one of them is matched to someone they prefer
+- The third constraint ensures stability: for each potential pair \( (i,j) \), either they are matched, or at least one of them is matched to someone they prefer
+- \( \succ_j \) denotes woman \( j \)'s preference order over men
+- \( \succ_i \) denotes man \( i \)'s preference order over women
 
 ## Implementation
 
