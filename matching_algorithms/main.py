@@ -355,6 +355,7 @@ def random_serial_dictatorship(students, schools):
 ##Linear Programming Algorithms with Stability Constraints
 
 ##Stable Matching via Linear Programming
+
 def stable_matching_lp(men_prefs, women_prefs):
     """
     Finds a stable matching using linear programming.
@@ -374,13 +375,13 @@ def stable_matching_lp(men_prefs, women_prefs):
     women = list(women_prefs.keys())
     n = len(men)  # Assuming equal number of men and women
     
-    # Create binary variables for each possible pairing
-    x = pulp.LpVariable.dicts("match", ((m, w) for m in men for w in women), cat='Binary')
+    # Create continuous variables for each possible pairing
+    x = pulp.LpVariable.dicts("match", ((m, w) for m in men for w in women), lowBound=0, upBound=1)
     
-    # Objective function: maximize the number of matches (will always be n)
+    # Objective function: maximize the sum of matches
     prob += pulp.lpSum(x[m, w] for m in men for w in women)
     
-    # Constraint: Each person is matched to exactly one partner
+    # Constraint: Each person is matched to exactly one partner (sum to 1)
     for m in men:
         prob += pulp.lpSum(x[m, w] for w in women) == 1
     

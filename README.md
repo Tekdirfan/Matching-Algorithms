@@ -501,7 +501,7 @@ This approach uses linear programming to find a stable matching in the classic s
 
 ## Mathematical Formulation
 
-Let \( x_{ij} \) be a binary variable indicating whether man \( i \) is matched with woman \( j \). The linear program can be formulated as follows:
+Let x_ij be a continuous variable indicating the extent to which man i is matched with woman j. The linear program can be formulated as follows:
 
 $$
 \text{maximize} \quad \sum_{i=1}^n \sum_{j=1}^n x_{ij}
@@ -526,17 +526,19 @@ $$
 
 
 $$
-x_{ij} \in \{0, 1\} \quad \forall i,j \in \{1, \ldots, n\}
+0 \leq x_{ij} \leq 1 \quad \forall i,j \in \{1, \ldots, n\}
 $$
 
 
 Where:
 - n is the number of men (equal to the number of women)
-- x_ij is 1 if man i is matched with woman j, and 0 otherwise
-- The first two constraints ensure that each person is matched exactly once
-- The third constraint ensures stability: for each potential pair (i,j), either they are matched, or at least one of them is matched to someone they prefer
+- x_ij represents the extent to which man i is matched with woman j (0 ≤ x_ij ≤ 1)
+- The first two constraints ensure that each person is fully matched (potentially fractionally to multiple partners)
+- The third constraint ensures stability: for each potential pair (i,j), either they are matched to some extent, or at least one of them is matched to a preferable partner to some extent
 - ≻_j denotes woman j's preference order over men
 - ≻_i denotes man i's preference order over women
+
+Note: This formulation allows for fractional matchings. However, it can be shown that for the stable marriage problem, there always exists an optimal solution where all x_ij are either 0 or 1. This is due to the structure of the constraint matrix, which is totally unimodular. Therefore, solving this linear program will yield an integer solution, corresponding to a stable matching.
 
 ## Implementation
 
@@ -550,6 +552,19 @@ The algorithm is implemented in Python using the PuLP library for linear program
 ## Returns
 
 - `dict`: A dictionary representing the stable matching, where keys are men and values are their matched women.
+
+## Runtime Table:
+
+| Number of Agents per Side | Average Runtime (seconds) |
+|---------------------------|---------------------------|
+| 10                        | 0.034372                  |
+| 30                        | 0.196681                  |
+| 50                        | 0.880134                  |
+| 70                        | 2.394112                  |
+| 90                        | 5.392979                  |
+| 110                       | 10.799092                 |
+
+![Runtime of Stable MAtching LP Algorithm](images/stable_matching_lp.png)
 
 ## Usage
 
