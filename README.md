@@ -214,17 +214,21 @@ The mechanism works as follows:
 
 - `schools` : dict
   - A dictionary where keys are school names and values are dictionaries containing:
-    - `capacity` : int
-      - Integer representing the school's capacity
     - `priorities` : list
       - List of student names in order of priority
-  - Example: `{'School1': {'capacity': 2, 'priorities': ['Bob', 'Alice']}, 'School2': {'capacity': 1, 'priorities': ['Alice', 'Bob']}}`
+    - `capacity` : int
+      - Integer representing the school's capacity
+  - Example: `{'School1': {'priorities': ['Bob', 'Alice'], 'capacity': 2}, 'School2': {'priorities': ['Alice', 'Bob'], 'capacity': 1}}`
+
+- `student_proposing` : bool, optional
+  - If True, students propose to schools. If False, schools propose to students.
+  - Default is True.
 
 ## Returns
 
-- dict
-  - A dictionary representing the matching, where keys are student names and values are assigned schools.
-  - Example: `{'Alice': 'School1', 'Bob': 'School2'}`
+- `dict`
+  - A dictionary representing the matching, where keys are school names and values are lists of assigned students.
+  - Example: `{'School1': ['Alice'], 'School2': ['Bob']}`
 
 ## Usage
 
