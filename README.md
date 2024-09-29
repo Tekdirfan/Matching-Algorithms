@@ -1193,26 +1193,6 @@ The `is_stable` function checks whether a given matching is stable under the pro
     print(f"Is the matching stable? {is_stable_result}")
     ```
 
-3. Check stability for a school choice problem:
-
-    ```python
-    from matching_algorithms import is_stable, generate_instance
-
-    # Generate an instance for school choice
-    student_prefs, school_data = generate_instance(100, num_schools=5, is_marriage_market=False, is_cardinal=False)
-
-    # Assume we have a matching
-    matching = {'S1': 'C1', 'S2': 'C2', ...}  # Complete this with your matching
-
-    # Extract school priorities from school_data
-    school_priorities = {school: data['priorities'] for school, data in school_data.items()}
-
-    # Check stability
-    is_stable_result = is_stable(matching, student_prefs, school_priorities, is_cardinal=False)
-    print(f"Is the school choice matching stable? {is_stable_result}")
-    ```
-
-Note: When checking stability for school choice problems, ensure that the `matching` dictionary keys are students and values are schools. The `school_priorities` should be extracted from the `school_data` returned by `generate_instance`.
 ## Contributing
 
 Contributions are welcome! Please feel free to submit a pull request or open an issue for any suggestions or improvements. 
