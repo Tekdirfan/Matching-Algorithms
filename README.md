@@ -80,12 +80,12 @@ The algorithm proceeds in rounds:
 ## Runtime Table:
 | Number of Agents per Side | Average Runtime (seconds) |
 |---------------------------|---------------------------|
-| 10                        | 0.000079                  |
-| 50                        | 0.001461                  |
-| 90                        | 0.004190                  |
-| 130                       | 0.008820                  |
-| 170                       | 0.016767                  |
-| 210                       | 0.028463                  |
+| 10                        | 0.000132                  |
+| 50                        | 0.001144                  |
+| 90                        | 0.003932                  |
+| 130                       | 0.007014                  |
+| 170                       | 0.013835                  |
+| 210                       | 0.020685                  |
 
 ![Deferred Acceptance Algorithm Runtime](images/da_runtime.png)
 

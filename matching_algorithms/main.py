@@ -31,6 +31,7 @@ def deferred_acceptance(men_preferences, women_preferences, men_propose=True):
     # Initialize all proposers as free
     free_proposers = proposers.copy()
     engagements = {}
+    next_to_propose = {proposer: 0 for proposer in proposers}
     
     # Continue while there are free proposers who still have acceptors to propose to
     while free_proposers:
@@ -39,28 +40,32 @@ def deferred_acceptance(men_preferences, women_preferences, men_propose=True):
         # Get the proposer's preference list
         proposer_prefs = proposer_preferences[proposer]
         
-        for acceptor in proposer_prefs:
-            # If the acceptor is free, engage them
-            if acceptor not in engagements.values():
-                engagements[proposer] = acceptor
-                break
-            else:
-                # Find the current partner of the acceptor
-                current_partner = [p for p, a in engagements.items() if a == acceptor][0]
-                
-                # If the acceptor prefers this proposer to their current partner
-                if acceptor_preferences[acceptor].index(proposer) < acceptor_preferences[acceptor].index(current_partner):
-                    # Break the current engagement
-                    del engagements[current_partner]
-                    # Create the new engagement
-                    engagements[proposer] = acceptor
-                    # Add the previous partner back to free proposers
-                    free_proposers.append(current_partner)
-                    break
+        # Check if the proposer has already proposed to everyone
+        if next_to_propose[proposer] >= len(proposer_prefs):
+            continue
+        
+        acceptor = proposer_prefs[next_to_propose[proposer]]
+        next_to_propose[proposer] += 1
+        
+        # If the acceptor is free, engage them
+        if acceptor not in engagements.values():
+            engagements[proposer] = acceptor
         else:
-            # If the proposer has proposed to all acceptors and is still unmatched, add them back to free proposers
-            free_proposers.append(proposer)
-    
+            # Find the current partner of the acceptor
+            current_partner = [p for p, a in engagements.items() if a == acceptor][0]
+            
+            # If the acceptor prefers this proposer to their current partner
+            if acceptor_preferences[acceptor].index(proposer) < acceptor_preferences[acceptor].index(current_partner):
+                # Break the current engagement
+                del engagements[current_partner]
+                # Create the new engagement
+                engagements[proposer] = acceptor
+                # Add the previous partner back to free proposers
+                free_proposers.append(current_partner)
+            else:
+                # If rejected, add the proposer back to free proposers
+                free_proposers.append(proposer)
+
     return engagements
 
 #------------------------------------------------------------------------------------------------------------
