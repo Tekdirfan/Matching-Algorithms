@@ -133,20 +133,15 @@ The **School Choice Deferred Acceptance** algorithm adapts the classic Deferred 
 - Produces stable matchings: No student-school pair would prefer each other over their assigned matches.
 - Eliminates "justified envy" - no student can claim they should have a spot at a school over someone with lower priority.
 - Student-optimal: When students propose, it produces the best stable matching for students.
-- Favors truthful revelation of preferences over strategic behavior.
-- Not necessarily Pareto efficient among students (though it is Pareto efficient among stable matchings)
-
 ## Parameters
-
+- `students` : dict
+  - A dictionary where keys are student names and values are lists of school names in order of preference
 - `schools` : dict
   - A dictionary where keys are school names and values are dictionaries containing:
     - `'preferences'` : list
       - List of student names in order of preference
-    - `'quota'` : int
+    - `'capacity'` : int
       - Integer representing the school's capacity
-
-- `students` : dict
-  - A dictionary where keys are student names and values are lists of school names in order of preference
 
 - `student_proposing` : bool, optional
   - If True, students propose to schools. If False, schools propose to students.
