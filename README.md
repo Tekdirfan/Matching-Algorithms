@@ -531,12 +531,12 @@ $$
 
 
 Where:
-- \( n \) is the number of men (equal to the number of women)
-- \( x_{ij} \) is 1 if man \( i \) is matched with woman \( j \), and 0 otherwise
+- n is the number of men (equal to the number of women)
+- x_ij is 1 if man i is matched with woman j, and 0 otherwise
 - The first two constraints ensure that each person is matched exactly once
-- The third constraint ensures stability: for each potential pair \( (i,j) \), either they are matched, or at least one of them is matched to someone they prefer
-- \( \succ_j \) denotes woman \( j \)'s preference order over men
-- \( \succ_i \) denotes man \( i \)'s preference order over women
+- The third constraint ensures stability: for each potential pair (i,j), either they are matched, or at least one of them is matched to someone they prefer
+- ≻_j denotes woman j's preference order over men
+- ≻_i denotes man i's preference order over women
 
 ## Implementation
 
