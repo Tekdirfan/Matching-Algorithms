@@ -564,7 +564,7 @@ The algorithm is implemented in Python using the PuLP library for linear program
 | 90                        | 5.392979                  |
 | 110                       | 10.799092                 |
 
-![Runtime of Stable MAtching LP Algorithm](images/stable_matching_lp.png)
+![Runtime of Stable Matching LP Algorithm](images/stable_matching_lp.png)
 
 ## Usage
 
@@ -651,6 +651,18 @@ The algorithm has been implemented in Python using the PuLP library for linear p
 - dict
   - A dictionary representing the Egalitarian stable matching, where keys are men and values are their matched women.
 
+## Runtime Table :
+
+| Number of Agents per Side | Average Runtime (seconds) |
+|---------------------------|---------------------------|
+| 10                        | 0.034664                  |
+| 30                        | 0.199403                  |
+| 50                        | 1.084773                  |
+| 70                        | 2.474764                  |
+| 90                        | 5.610019                  |
+| 110                       | 10.813405                 |
+
+![Runtime of Egalitarian Stable Matching Algorithm](images/egalitarian_stable_matching.png)
 
 
 ## Usage
