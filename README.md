@@ -950,41 +950,55 @@ The **Nash Matching** algorithm without stability constraints finds a matching t
 
 ## Mathematical Formulation
 
-The objective function for the Nash Matching problem can be formulated as follows:
+The primary objective is to maximize the product of utilities:
 
 $$
-\text{maximize} \quad \prod_{(\ell,r) \in L \times R} (v(\ell,r) + v(r,\ell))^{\mu_{\ell,r}}
-$$
-
-
-which is equivalent to maximizing:
-
-$$
-\text{maximize} \quad \sum_{(\ell,r) \in L \times R} \mu_{\ell,r} \log(v(\ell,r) + v(r,\ell))
+\text{maximize} \quad \prod_{(m,w) \in M \times W} (v_m(m,w) \cdot v_w(w,m))^{\mu_{m,w}}
 $$
 
 
-subject to:
+This can be transformed into a more computationally tractable form by taking the logarithm:
 
 $$
-\sum_{r \in R} \mu_{\ell,r} = 1 \quad \forall \, \ell \in L
-$$
-
-
-$$
-\sum_{\ell \in L} \mu_{\ell,r} = 1 \quad \forall \, r \in R
+\text{maximize} \quad \sum_{(m,w) \in M \times W} \mu_{m,w} \log(v_m(m,w) \cdot v_w(w,m))
 $$
 
 
-$$
-\mu_{\ell,r} \geq 0 \quad \forall \, (\ell,r) \in L \times R
-$$
+### Constraints
 
+The optimization is subject to the following constraints:
 
-Where:
-- $$L$$ and $$R$$ are the two sets of participants to be matched.
-- $$v(\ell,r)$$ is the valuation that participant $$\ell$$ assigns to being matched with participant $$r$$.
-- $$\mu_{\ell,r}$$ is a binary variable indicating whether participant $$\ell$$ and participant $$r$$ are matched.
+1. Each man is matched to exactly one woman:
+
+   $$
+   \sum_{w \in W} \mu_{m,w} = 1 \quad \forall \, m \in M
+   $$
+
+2. Each woman is matched to exactly one man:
+
+   $$
+   \sum_{m \in M} \mu_{m,w} = 1 \quad \forall \, w \in W
+   $$
+
+3. Non-negativity constraint for matching variables:
+
+   $$
+   \mu_{m,w} \geq 0 \quad \forall \, (m,w) \in M \times W
+   $$
+
+### Notation
+
+- $$M$$ is the set of men
+- $$W$$ is the set of women
+- $$v_m(m,w)$$ is the utility that man $$m$$ derives from being matched with woman $$w$$
+- $$v_w(w,m)$$ is the utility that woman $$w$$ derives from being matched with man $$m$$
+- $$\mu_{m,w}$$ is a binary variable indicating whether man $$m$$ and woman $$w$$ are matched (1) or not (0)
+
+## Interpretation
+
+This formulation allows for different utility functions for men and women, capturing potentially asymmetric preferences or valuations between the two sides of the matching market. The objective function multiplies these two separate utilities for each potential match, aiming to maximize the overall product of utilities across all matches.
+
+The logarithmic transformation of the objective function helps in computational implementation while maintaining the same optimal solution, as the logarithm is a monotonically increasing function.
 
 ## Implementation
 
