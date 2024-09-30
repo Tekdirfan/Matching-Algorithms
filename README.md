@@ -699,44 +699,45 @@ The **Nash Stable Matching** algorithm finds a stable matching that maximizes th
 The objective function for the Nash Stable Matching problem can be formulated as follows:
 
 $$
-\text{maximize} \quad \prod_{(m,w) \in M \times W} (v_m(m,w) \cdot v_w(w,m))^{\mu_{m,w}}
+\text{maximize} \quad \prod_{(\ell,r) \in L \times R} v(\ell,r)^{\mu_{\ell,r}}
+$$
+
+
+which is equivalent to maximizing:
+
+$$
+\text{maximize} \quad \sum_{(\ell,r) \in L \times R} \mu_{\ell,r} \log v(\ell,r)
 $$
 
 
 subject to:
 
 $$
-\sum_{w \in W} \mu_{m,w} = 1 \quad \forall \, m \in M
+\sum_{r \in R} \mu_{\ell,r} = 1 \quad \forall \, \ell \in L
 $$
 
 
 $$
-\sum_{m \in M} \mu_{m,w} = 1 \quad \forall \, w \in W
+\sum_{\ell \in L} \mu_{\ell,r} = 1 \quad \forall \, r \in R
 $$
 
 
 $$
-\mu_{m,w} \geq 0 \quad \forall \, (m,w) \in M \times W
+\mu_{\ell,r} + \sum_{s \in R: \, v(\ell,s) > v(\ell,r)} \mu_{\ell,s} + \sum_{k \in L: \, v(k,r) > v(\ell,r)} \mu_{k,r} \geq 1 \quad \forall \, (\ell,r) \in L \times R
 $$
 
 
 $$
-\mu_{m,w} \cdot v_m(m,w) \geq \mu_{m,w'} \cdot v_m(m,w') \quad \forall \, m \in M, w, w' \in W
-$$
-
-
-$$
-\mu_{m,w} \cdot v_w(w,m) \geq \mu_{m',w} \cdot v_w(w,m') \quad \forall \, w \in W, m, m' \in M
+\mu_{\ell,r} \geq 0 \quad \forall \, (\ell,r) \in L \times R
 $$
 
 
 Where:
-- $$M$$ and $$W$$ are the sets of men and women to be matched, respectively.
-- $$v_m(m,w)$$ is the utility that man $$m$$ derives from being matched with woman $$w$$.
-- $$v_w(w,m)$$ is the utility that woman $$w$$ derives from being matched with man $$m$$.
-- $$\mu_{m,w}$$ is a binary variable indicating whether man $$m$$ and woman $$w$$ are matched.
+- $$L$$ and $$R$$ are the two sets of participants to be matched.
+- $$v(\ell,r)$$ is the valuation that participant $$\ell$$ assigns to being matched with participant $$r$$.
+- $$\mu_{\ell,r}$$ is a binary variable indicating whether participant $$\ell$$ and participant $$r$$ are matched.
 
-This formulation maximizes the product of utilities for all matched pairs, ensuring that each participant is matched exactly once. The last two constraints ensure stability by preventing any pair from having an incentive to deviate from their assigned matches.
+This formulation maximizes the product of valuations (Nash social welfare) while ensuring that each participant is matched exactly once and that the matching is stable. The logarithmic transformation allows us to solve this as a linear programming problem.
 
 ## Implementation
 
@@ -949,55 +950,41 @@ The **Nash Matching** algorithm without stability constraints finds a matching t
 
 ## Mathematical Formulation
 
-The primary objective is to maximize the product of utilities:
+The objective function for the Nash Matching problem can be formulated as follows:
 
 $$
-\text{maximize} \quad \prod_{(m,w) \in M \times W} (v_m(m,w) \cdot v_w(w,m))^{\mu_{m,w}}
-$$
-
-
-This can be transformed into a more computationally tractable form by taking the logarithm:
-
-$$
-\text{maximize} \quad \sum_{(m,w) \in M \times W} \mu_{m,w} \log(v_m(m,w) \cdot v_w(w,m))
+\text{maximize} \quad \prod_{(\ell,r) \in L \times R} (v_{\ell}(\ell,r) \times v_{r}(r,\ell))^{\mu_{\ell,r}}
 $$
 
 
-### Constraints
+which is equivalent to maximizing:
 
-The optimization is subject to the following constraints:
+$$
+\text{maximize} \quad \sum_{(\ell,r) \in L \times R} \mu_{\ell,r} (\log(v(\ell,r)) + \log(v(r,\ell)))
+$$
 
-1. Each man is matched to exactly one woman:
 
-   $$
-   \sum_{w \in W} \mu_{m,w} = 1 \quad \forall \, m \in M
-   $$
+subject to:
 
-2. Each woman is matched to exactly one man:
+$$
+\sum_{r \in R} \mu_{\ell,r} = 1 \quad \forall \, \ell \in L
+$$
 
-   $$
-   \sum_{m \in M} \mu_{m,w} = 1 \quad \forall \, w \in W
-   $$
 
-3. Non-negativity constraint for matching variables:
+$$
+\sum_{\ell \in L} \mu_{\ell,r} = 1 \quad \forall \, r \in R
+$$
 
-   $$
-   \mu_{m,w} \geq 0 \quad \forall \, (m,w) \in M \times W
-   $$
 
-### Notation
+$$
+\mu_{\ell,r} \geq 0 \quad \forall \, (\ell,r) \in L \times R
+$$
 
-- $$M$$ is the set of men
-- $$W$$ is the set of women
-- $$v_m(m,w)$$ is the utility that man $$m$$ derives from being matched with woman $$w$$
-- $$v_w(w,m)$$ is the utility that woman $$w$$ derives from being matched with man $$m$$
-- $$\mu_{m,w}$$ is a binary variable indicating whether man $$m$$ and woman $$w$$ are matched (1) or not (0)
 
-## Interpretation
-
-This formulation allows for different utility functions for men and women, capturing potentially asymmetric preferences or valuations between the two sides of the matching market. The objective function multiplies these two separate utilities for each potential match, aiming to maximize the overall product of utilities across all matches.
-
-The logarithmic transformation of the objective function helps in computational implementation while maintaining the same optimal solution, as the logarithm is a monotonically increasing function.
+Where:
+- $$L$$ and $$R$$ are the two sets of participants to be matched.
+- $$v(\ell,r)$$ is the valuation that participant $$\ell$$ assigns to being matched with participant $$r$$.
+- $$\mu_{\ell,r}$$ is a binary variable indicating whether participant $$\ell$$ and participant $$r$$ are matched.
 
 ## Implementation
 
