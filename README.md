@@ -699,45 +699,44 @@ The **Nash Stable Matching** algorithm finds a stable matching that maximizes th
 The objective function for the Nash Stable Matching problem can be formulated as follows:
 
 $$
-\text{maximize} \quad \prod_{(\ell,r) \in L \times R} v(\ell,r)^{\mu_{\ell,r}}
-$$
-
-
-which is equivalent to maximizing:
-
-$$
-\text{maximize} \quad \sum_{(\ell,r) \in L \times R} \mu_{\ell,r} \log v(\ell,r)
+\text{maximize} \quad \prod_{(m,w) \in M \times W} (v_m(m,w) \cdot v_w(w,m))^{\mu_{m,w}}
 $$
 
 
 subject to:
 
 $$
-\sum_{r \in R} \mu_{\ell,r} = 1 \quad \forall \, \ell \in L
+\sum_{w \in W} \mu_{m,w} = 1 \quad \forall \, m \in M
 $$
 
 
 $$
-\sum_{\ell \in L} \mu_{\ell,r} = 1 \quad \forall \, r \in R
+\sum_{m \in M} \mu_{m,w} = 1 \quad \forall \, w \in W
 $$
 
 
 $$
-\mu_{\ell,r} + \sum_{s \in R: \, v(\ell,s) > v(\ell,r)} \mu_{\ell,s} + \sum_{k \in L: \, v(k,r) > v(\ell,r)} \mu_{k,r} \geq 1 \quad \forall \, (\ell,r) \in L \times R
+\mu_{m,w} \geq 0 \quad \forall \, (m,w) \in M \times W
 $$
 
 
 $$
-\mu_{\ell,r} \geq 0 \quad \forall \, (\ell,r) \in L \times R
+\mu_{m,w} \cdot v_m(m,w) \geq \mu_{m,w'} \cdot v_m(m,w') \quad \forall \, m \in M, w, w' \in W
+$$
+
+
+$$
+\mu_{m,w} \cdot v_w(w,m) \geq \mu_{m',w} \cdot v_w(w,m') \quad \forall \, w \in W, m, m' \in M
 $$
 
 
 Where:
-- $$L$$ and $$R$$ are the two sets of participants to be matched.
-- $$v(\ell,r)$$ is the valuation that participant $$\ell$$ assigns to being matched with participant $$r$$.
-- $$\mu_{\ell,r}$$ is a binary variable indicating whether participant $$\ell$$ and participant $$r$$ are matched.
+- $$M$$ and $$W$$ are the sets of men and women to be matched, respectively.
+- $$v_m(m,w)$$ is the utility that man $$m$$ derives from being matched with woman $$w$$.
+- $$v_w(w,m)$$ is the utility that woman $$w$$ derives from being matched with man $$m$$.
+- $$\mu_{m,w}$$ is a binary variable indicating whether man $$m$$ and woman $$w$$ are matched.
 
-This formulation maximizes the product of valuations (Nash social welfare) while ensuring that each participant is matched exactly once and that the matching is stable. The logarithmic transformation allows us to solve this as a linear programming problem.
+This formulation maximizes the product of utilities for all matched pairs, ensuring that each participant is matched exactly once. The last two constraints ensure stability by preventing any pair from having an incentive to deviate from their assigned matches.
 
 ## Implementation
 
