@@ -557,12 +557,10 @@ The algorithm is implemented in Python using the PuLP library for linear program
 
 | Number of Agents per Side | Average Runtime (seconds) |
 |---------------------------|---------------------------|
-| 10                        | 0.034372                  |
-| 30                        | 0.196681                  |
-| 50                        | 0.880134                  |
-| 70                        | 2.394112                  |
-| 90                        | 5.392979                  |
-| 110                       | 10.799092                 |
+| 10                        | 0.037072                  |
+| 40                        | 0.493957                  |
+| 70                        | 2.998246                  |
+| 100                       | 10.351443                 |
 
 ![Runtime of Stable Matching LP Algorithm](images/stable_matching_lp.png)
 
@@ -655,12 +653,10 @@ The algorithm has been implemented in Python using the PuLP library for linear p
 
 | Number of Agents per Side | Average Runtime (seconds) |
 |---------------------------|---------------------------|
-| 10                        | 0.034664                  |
-| 30                        | 0.199403                  |
-| 50                        | 1.084773                  |
-| 70                        | 2.474764                  |
-| 90                        | 5.610019                  |
-| 110                       | 10.813405                 |
+| 10                        | 0.037443                  |
+| 40                        | 0.469973                  |
+| 70                        | 2.617627                  |
+| 100                       | 8.258007                  |
 
 ![Runtime of Egalitarian Stable Matching Algorithm](images/egalitarian_stable_matching.png)
 
@@ -753,7 +749,17 @@ The algorithm is implemented in Python using the PuLP library for linear program
 
 - `dict`: A dictionary representing the Nash stable matching, where keys are men and values are their matched women.
 
+## Runtime Table:
 
+
+| Number of Agents per Side | Average Runtime (seconds) |
+|---------------------------|---------------------------|
+| 10                        | 0.034171                  |
+| 40                        | 0.416633                  |
+| 70                        | 1.799205                  |
+| 100                       | 5.155402                  |
+
+![Runtime of Nash Stable Matching Algorithm](images/nash_stable_matching.png)
 
 ## Usage
 ```python
@@ -841,7 +847,17 @@ The algorithm has been implemented in Python using the PuLP library for linear p
 - dict
   - A dictionary representing the utilitarian stable matching, where keys are men and values are their matched women.
   - Example: `{'M1': 'W1', 'M2': 'W2'}`
-  
+
+## Runtime Table:
+
+| Number of Agents per Side | Average Runtime (seconds) |
+|---------------------------|---------------------------|
+| 10                        | 0.034295                  |
+| 40                        | 0.371985                  |
+| 70                        | 1.791714                  |
+| 100                       | 5.238294                  |
+
+![Runtime of Utilitarian Stable Matching Algorithm](images/utilitarian_stable_matching.png)
 
 ## Usage
 ```python

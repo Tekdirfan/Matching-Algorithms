@@ -744,7 +744,7 @@ def generate_instance(num_agents, num_schools=None, is_marriage_market=True, is_
     side1_preferences = {}
     for agent in side1:
         if is_cardinal:
-            side1_preferences[agent] = {partner: random.uniform(0, 100) for partner in side2}
+            side1_preferences[agent] = {partner: random.uniform(1, 100) for partner in side2}
         else:
             side1_preferences[agent] = random.sample(side2, len(side2))
     
