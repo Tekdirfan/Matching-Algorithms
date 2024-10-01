@@ -369,19 +369,20 @@ def stable_matching_lp(men_prefs, women_prefs):
     """
     
     # Create the LP problem
-    prob = pulp.LpProblem("Stable_Matching", pulp.LpMaximize)
+    prob = pulp.LpProblem("Stable_Matching_LP", pulp.LpMaximize)
     
     men = list(men_prefs.keys())
     women = list(women_prefs.keys())
     n = len(men)  # Assuming equal number of men and women
     
-    # Create continuous variables for each possible pairing
+    # Create variables
     x = pulp.LpVariable.dicts("match", ((m, w) for m in men for w in women), lowBound=0, upBound=1)
     
-    # Objective function: maximize the sum of matches
+    # Objective function
     prob += pulp.lpSum(x[m, w] for m in men for w in women)
     
-    # Constraint: Each person is matched to exactly one partner (sum to 1)
+    # Constraints
+    # Each person is fully matched
     for m in men:
         prob += pulp.lpSum(x[m, w] for w in women) == 1
     
@@ -391,24 +392,20 @@ def stable_matching_lp(men_prefs, women_prefs):
     # Stability constraints
     for m in men:
         for w in women:
-            # Find indices of current pair in preference lists
-            m_pref_index = men_prefs[m].index(w)
-            w_pref_index = women_prefs[w].index(m)
-            
-            # Sum of x[m,w'] where m prefers w' to w
-            m_preferred = pulp.lpSum(x[m, w_prime] for w_prime in men_prefs[m][:m_pref_index])
-            
-            # Sum of x[m',w] where w prefers m' to m
-            w_preferred = pulp.lpSum(x[m_prime, w] for m_prime in women_prefs[w][:w_pref_index])
-            
-            # Stability constraint
-            prob += x[m, w] + m_preferred + w_preferred >= 1
+            prob += (x[m, w] + 
+                     pulp.lpSum(x[m2, w] for m2 in men if women_prefs[w].index(m2) < women_prefs[w].index(m)) + 
+                     pulp.lpSum(x[m, w2] for w2 in women if men_prefs[m].index(w2) < men_prefs[m].index(w))) >= 1
     
     # Solve the problem
     prob.solve(pulp.PULP_CBC_CMD(msg=False))
     
     # Extract the solution
-    matching = {m: next(w for w in women if x[m, w].value() > 0.5) for m in men}
+    matching = {}
+    for m in men:
+        for w in women:
+            if x[m, w].value() > 0.5:  # We consider a match if x[m, w] > 0.5
+                matching[m] = w
+                break
     
     return matching
 
@@ -417,48 +414,54 @@ def stable_matching_lp(men_prefs, women_prefs):
 
 def egalitarian_stable_matching(men_prefs, women_prefs):
     """
-    Finds a stable matching that minimizes the sum of preference ranks for all participants among all possible stable matchings, using linear programming.
+    Calculates the Egalitarian Stable Matching.
+    
     Args:
     men_prefs (dict): A dictionary where keys are men and values are lists of women in order of preference.
     women_prefs (dict): A dictionary where keys are women and values are lists of men in order of preference.
     
     Returns:
-    dict: A dictionary representing the Egalitarian stable matching, where keys are men and values are their matched women.
+    dict: A dictionary representing the Egalitarian Stable Matching, where keys are men 
+          and values are their matched women.
     """
+    
+    # Create the LP problem
     prob = pulp.LpProblem("Egalitarian_Stable_Matching", pulp.LpMinimize)
     
     men = list(men_prefs.keys())
     women = list(women_prefs.keys())
     
-    x = pulp.LpVariable.dicts("match", ((m, w) for m in men for w in women), lowBound=0, upBound=1, cat='Continuous')
+    # Create variables
+    x = pulp.LpVariable.dicts("match", ((m, w) for m in men for w in women), lowBound=0, upBound=1)
     
-    prob += pulp.lpSum(
-        (men_prefs[m].index(w) + women_prefs[w].index(m)) * x[(m, w)]
-        for m in men for w in women
-    )
+    # Helper function to get rank
+    def get_rank(prefs, a, b):
+        return prefs[a].index(b) + 1
     
+    # Objective function
+    prob += pulp.lpSum((get_rank(men_prefs, m, w) + get_rank(women_prefs, w, m)) * x[m, w] 
+                       for m in men for w in women)
+    
+    # Constraints
+    # Each participant is matched exactly once
     for m in men:
-        prob += pulp.lpSum(x[(m, w)] for w in women) == 1
+        prob += pulp.lpSum(x[m, w] for w in women) == 1
     
     for w in women:
-        prob += pulp.lpSum(x[(m, w)] for m in men) == 1
+        prob += pulp.lpSum(x[m, w] for m in men) == 1
     
+    # Stability constraints
     for m in men:
         for w in women:
-            prob += (
-                x[(m, w)] +
-                pulp.lpSum(x[(m, w2)] for w2 in women if men_prefs[m].index(w2) < men_prefs[m].index(w)) +
-                pulp.lpSum(x[(m2, w)] for m2 in men if women_prefs[w].index(m2) < women_prefs[w].index(m))
-                >= 1
-            )
+            prob += (x[m, w] + 
+                     pulp.lpSum(x[m, w2] for w2 in women if get_rank(men_prefs, m, w2) < get_rank(men_prefs, m, w)) + 
+                     pulp.lpSum(x[m2, w] for m2 in men if get_rank(women_prefs, w, m2) < get_rank(women_prefs, w, m))) >= 1
     
-    prob.solve(pulp.PULP_CBC_CMD(msg=0))  # Suppress solver output
+    # Solve the problem
+    prob.solve(pulp.PULP_CBC_CMD(msg=False))
     
-    matching = {}
-    for m in men:
-        for w in women:
-            if x[(m, w)].value() > 0.5:
-                matching[m] = w
+    # Extract the solution
+    matching = {m: max(women, key=lambda w: x[m, w].value()) for m in men}
     
     return matching
 
@@ -466,15 +469,17 @@ def egalitarian_stable_matching(men_prefs, women_prefs):
 ##Nash Stable Matching
 def nash_stable_matching(men_valuations, women_valuations):
     """
-    Calculates the Nash stable matching using linear programming.
-    This matching maximizes the product of utilities among all stable matchings.
+    Calculates the Nash Stable Matching.
     
     Args:
-    men_valuations (dict): A dictionary where keys are men and values are dictionaries of their valuations for each woman.
-    women_valuations (dict): A dictionary where keys are women and values are dictionaries of their valuations for each man.
+    men_valuations (dict): A dictionary where keys are men and values are 
+                           dictionaries of their valuations for each woman.
+    women_valuations (dict): A dictionary where keys are women and values are 
+                             dictionaries of their valuations for each man.
     
     Returns:
-    dict: A dictionary representing the Nash stable matching, where keys are men and values are their matched women.
+    dict: A dictionary representing the Nash Stable Matching, where keys are men 
+          and values are their matched women.
     """
     
     # Create the LP problem
@@ -483,16 +488,15 @@ def nash_stable_matching(men_valuations, women_valuations):
     men = list(men_valuations.keys())
     women = list(women_valuations.keys())
     
-    # Create binary variables for each possible pairing
-    x = pulp.LpVariable.dicts("match", ((m, w) for m in men for w in women), cat='Binary')
+    # Create variables
+    x = pulp.LpVariable.dicts("match", ((m, w) for m in men for w in women), lowBound=0, upBound=1)
     
-    # Create continuous variables for the log of utilities
-    log_utility = pulp.LpVariable.dicts("log_utility", ((m, w) for m in men for w in women), lowBound=None)
+    # Objective function (logarithmic transformation)
+    prob += pulp.lpSum(x[m, w] * (math.log(men_valuations[m][w]) + math.log(women_valuations[w][m])) 
+                       for m in men for w in women)
     
-    # Objective function: maximize sum of log utilities (equivalent to maximizing product of utilities)
-    prob += pulp.lpSum(log_utility[m, w] for m in men for w in women)
-    
-    # Constraint: Each person is matched to exactly one partner
+    # Constraints
+    # Each participant is matched exactly once
     for m in men:
         prob += pulp.lpSum(x[m, w] for w in women) == 1
     
@@ -502,41 +506,32 @@ def nash_stable_matching(men_valuations, women_valuations):
     # Stability constraints
     for m in men:
         for w in women:
-            for m2 in men:
-                if m2 != m:
-                    prob += x[m, w] + x[m2, w] + pulp.lpSum(x[m, w2] for w2 in women if men_valuations[m][w2] > men_valuations[m][w]) + \
-                            pulp.lpSum(x[m2, w2] for w2 in women if women_valuations[w][m2] > women_valuations[w][m]) >= 1
-    
-    # Logarithmic utility constraints
-    for m in men:
-        for w in women:
-            total_value = men_valuations[m][w] + women_valuations[w][m]
-            if total_value > 0:
-                prob += log_utility[m, w] <= math.log(total_value) + 1000 * (x[m, w] - 1)
-                prob += log_utility[m, w] >= math.log(total_value) - 1000 * (1 - x[m, w])
-            else:
-                prob += log_utility[m, w] <= -1000 * (1 - x[m, w])
-                prob += log_utility[m, w] >= -1000 * x[m, w]
+            prob += (x[m, w] + 
+                     pulp.lpSum(x[m, w2] for w2 in women if men_valuations[m][w2] > men_valuations[m][w]) + 
+                     pulp.lpSum(x[m2, w] for m2 in men if women_valuations[w][m2] > women_valuations[w][m])) >= 1
     
     # Solve the problem
     prob.solve(pulp.PULP_CBC_CMD(msg=False))
     
     # Extract the solution
-    matching = {m: next(w for w in women if x[m, w].value() > 0.5) for m in men}
+    matching = {m: max(women, key=lambda w: x[m, w].value()) for m in men}
     
     return matching
 #------------------------------------------------------------------------------------------------------------
 ##Utilitarian Stable Matching
 def utilitarian_stable_matching(men_valuations, women_valuations):
     """
-    Calculates the utilitarian stable matching using linear programming.
+    Calculates the Utilitarian Stable Matching.
     
     Args:
-    men_valuations (dict): A dictionary where keys are men and values are dictionaries of their valuations for each woman.
-    women_valuations (dict): A dictionary where keys are women and values are dictionaries of their valuations for each man.
+    men_valuations (dict): A dictionary where keys are men and values are 
+                           dictionaries of their valuations for each woman.
+    women_valuations (dict): A dictionary where keys are women and values are 
+                             dictionaries of their valuations for each man.
     
     Returns:
-    dict: A dictionary representing the utilitarian stable matching, where keys are men and values are their matched women.
+    dict: A dictionary representing the Utilitarian Stable Matching, where keys are men 
+          and values are their matched women.
     """
     
     # Create the LP problem
@@ -545,13 +540,14 @@ def utilitarian_stable_matching(men_valuations, women_valuations):
     men = list(men_valuations.keys())
     women = list(women_valuations.keys())
     
-    # Create binary variables for each possible pairing
-    x = pulp.LpVariable.dicts("match", ((m, w) for m in men for w in women), cat='Binary')
+    # Create variables
+    x = pulp.LpVariable.dicts("match", ((m, w) for m in men for w in women), lowBound=0, upBound=1)
     
-    # Objective function: maximize total valuation
-    prob += pulp.lpSum(men_valuations[m][w] * x[m, w] + women_valuations[w][m] * x[m, w] for m in men for w in women)
+    # Objective function
+    prob += pulp.lpSum((men_valuations[m][w] + women_valuations[w][m]) * x[m, w] for m in men for w in women)
     
-    # Constraint: Each person is matched to exactly one partner
+    # Constraints
+    # Each participant is matched exactly once
     for m in men:
         prob += pulp.lpSum(x[m, w] for w in women) == 1
     
@@ -561,16 +557,15 @@ def utilitarian_stable_matching(men_valuations, women_valuations):
     # Stability constraints
     for m in men:
         for w in women:
-            for m2 in men:
-                if m2 != m:
-                    prob += x[m, w] + x[m2, w] + pulp.lpSum(x[m, w2] for w2 in women if men_valuations[m][w2] > men_valuations[m][w]) + \
-                            pulp.lpSum(x[m2, w2] for w2 in women if women_valuations[w][m2] > women_valuations[w][m]) >= 1
+            prob += (x[m, w] + 
+                     pulp.lpSum(x[m, w2] for w2 in women if men_valuations[m][w2] > men_valuations[m][w]) + 
+                     pulp.lpSum(x[m2, w] for m2 in men if women_valuations[w][m2] > women_valuations[w][m])) >= 1
     
     # Solve the problem
     prob.solve(pulp.PULP_CBC_CMD(msg=False))
     
     # Extract the solution
-    matching = {m: next(w for w in women if x[m, w].value() > 0.5) for m in men}
+    matching = {m: max(women, key=lambda w: x[m, w].value()) for m in men}
     
     return matching
 
@@ -580,40 +575,47 @@ def utilitarian_stable_matching(men_valuations, women_valuations):
 ##Egalitarian Matching
 def egalitarian_matching(men_prefs, women_prefs):
     """
-    Implements the Egalitarian matching algorithm without stability constraints.
+    Calculates the Egalitarian Matching without stability constraint.
     
     Args:
     men_prefs (dict): A dictionary where keys are men and values are lists of women in order of preference.
     women_prefs (dict): A dictionary where keys are women and values are lists of men in order of preference.
     
     Returns:
-    dict: A dictionary representing the egalitarian matching, where keys are men and values are their matched women.
+    dict: A dictionary representing the Egalitarian Stable Matching, where keys are men 
+          and values are their matched women.
     """
     
     # Create the LP problem
-    prob = pulp.LpProblem("Egalitarian_Matching", pulp.LpMinimize)
+    prob = pulp.LpProblem("Egalitarian_Stable_Matching", pulp.LpMinimize)
     
     men = list(men_prefs.keys())
     women = list(women_prefs.keys())
     
-    # Create binary variables for each possible pairing
-    x = pulp.LpVariable.dicts("match", ((m, w) for m in men for w in women), cat='Binary')
+    # Create variables
+    x = pulp.LpVariable.dicts("match", ((m, w) for m in men for w in women), lowBound=0, upBound=1)
     
-    # Objective function: minimize the sum of preference ranks
-    prob += pulp.lpSum(men_prefs[m].index(w) * x[m, w] + women_prefs[w].index(m) * x[m, w] for m in men for w in women)
+    # Helper function to get rank
+    def get_rank(prefs, a, b):
+        return prefs[a].index(b) + 1
     
-    # Constraint: Each person is matched to exactly one partner
+    # Objective function
+    prob += pulp.lpSum((get_rank(men_prefs, m, w) + get_rank(women_prefs, w, m)) * x[m, w] 
+                       for m in men for w in women)
+    
+    # Constraints
+    # Each participant is matched exactly once
     for m in men:
         prob += pulp.lpSum(x[m, w] for w in women) == 1
     
     for w in women:
         prob += pulp.lpSum(x[m, w] for m in men) == 1
-    
+     
     # Solve the problem
     prob.solve(pulp.PULP_CBC_CMD(msg=False))
     
     # Extract the solution
-    matching = {m: next(w for w in women if x[m, w].value() > 0.5) for m in men}
+    matching = {m: max(women, key=lambda w: x[m, w].value()) for m in men}
     
     return matching
 #------------------------------------------------------------------------------------------------------------
@@ -621,55 +623,45 @@ def egalitarian_matching(men_prefs, women_prefs):
 ##Nash Matching
 def nash_matching(men_valuations, women_valuations):
     """
-    Calculates the Nash matching without stability constraints.
-    This matching maximizes the product of utilities without enforcing stability.
+    Calculates the Nash Matching without stability constraint.
     
     Args:
-    men_valuations (dict): A dictionary where keys are men and values are dictionaries of their valuations for each woman.
-    women_valuations (dict): A dictionary where keys are women and values are dictionaries of their valuations for each man.
+    men_valuations (dict): A dictionary where keys are men and values are 
+                           dictionaries of their valuations for each woman.
+    women_valuations (dict): A dictionary where keys are women and values are 
+                             dictionaries of their valuations for each man.
     
     Returns:
-    dict: A dictionary representing the Nash matching, where keys are men and values are their matched women.
+    dict: A dictionary representing the Nash Matching, where keys are men 
+          and values are their matched women.
     """
     
     # Create the LP problem
-    prob = pulp.LpProblem("Nash_Matching_Without_Stability", pulp.LpMaximize)
+    prob = pulp.LpProblem("Nash_Stable_Matching", pulp.LpMaximize)
     
     men = list(men_valuations.keys())
     women = list(women_valuations.keys())
     
-    # Create binary variables for each possible pairing
-    x = pulp.LpVariable.dicts("match", ((m, w) for m in men for w in women), cat='Binary')
+    # Create variables
+    x = pulp.LpVariable.dicts("match", ((m, w) for m in men for w in women), lowBound=0, upBound=1)
     
-    # Create continuous variables for the log of utilities
-    log_utility = pulp.LpVariable.dicts("log_utility", ((m, w) for m in men for w in women), lowBound=None)
+    # Objective function (logarithmic transformation)
+    prob += pulp.lpSum(x[m, w] * (math.log(men_valuations[m][w]) + math.log(women_valuations[w][m])) 
+                       for m in men for w in women)
     
-    # Objective function: maximize sum of log utilities (equivalent to maximizing product of utilities)
-    prob += pulp.lpSum(log_utility[m, w] for m in men for w in women)
-    
-    # Constraint: Each person is matched to exactly one partner
+    # Constraints
+    # Each participant is matched exactly once
     for m in men:
         prob += pulp.lpSum(x[m, w] for w in women) == 1
     
     for w in women:
         prob += pulp.lpSum(x[m, w] for m in men) == 1
     
-    # Logarithmic utility constraints
-    for m in men:
-        for w in women:
-            total_value = men_valuations[m][w] + women_valuations[w][m]
-            if total_value > 0:
-                prob += log_utility[m, w] <= math.log(total_value) + 1000 * (x[m, w] - 1)
-                prob += log_utility[m, w] >= math.log(total_value) - 1000 * (1 - x[m, w])
-            else:
-                prob += log_utility[m, w] <= -1000 * (1 - x[m, w])
-                prob += log_utility[m, w] >= -1000 * x[m, w]
-    
     # Solve the problem
     prob.solve(pulp.PULP_CBC_CMD(msg=False))
     
     # Extract the solution
-    matching = {m: next(w for w in women if x[m, w].value() > 0.5) for m in men}
+    matching = {m: max(women, key=lambda w: x[m, w].value()) for m in men}
     
     return matching
 
@@ -677,30 +669,33 @@ def nash_matching(men_valuations, women_valuations):
 ##Utilitarian Matching
 def utilitarian_matching(men_valuations, women_valuations):
     """
-    Calculates the utilitarian matching without stability constraints.
-    This matching maximizes the sum of utilities for all matched pairs.
+    Calculates the Utilitarian Matching without stability constraint.
     
     Args:
-    men_valuations (dict): A dictionary where keys are men and values are dictionaries of their valuations for each woman.
-    women_valuations (dict): A dictionary where keys are women and values are dictionaries of their valuations for each man.
+    men_valuations (dict): A dictionary where keys are men and values are 
+                           dictionaries of their valuations for each woman.
+    women_valuations (dict): A dictionary where keys are women and values are 
+                             dictionaries of their valuations for each man.
     
     Returns:
-    dict: A dictionary representing the utilitarian matching, where keys are men and values are their matched women.
+    dict: A dictionary representing the Utilitarian Stable Matching, where keys are men 
+          and values are their matched women.
     """
     
     # Create the LP problem
-    prob = pulp.LpProblem("Utilitarian_Matching", pulp.LpMaximize)
+    prob = pulp.LpProblem("Utilitarian_Stable_Matching", pulp.LpMaximize)
     
     men = list(men_valuations.keys())
     women = list(women_valuations.keys())
     
-    # Create binary variables for each possible pairing
-    x = pulp.LpVariable.dicts("match", ((m, w) for m in men for w in women), cat='Binary')
+    # Create variables
+    x = pulp.LpVariable.dicts("match", ((m, w) for m in men for w in women), lowBound=0, upBound=1)
     
-    # Objective function: maximize total valuation
-    prob += pulp.lpSum(men_valuations[m][w] * x[m, w] + women_valuations[w][m] * x[m, w] for m in men for w in women)
+    # Objective function
+    prob += pulp.lpSum((men_valuations[m][w] + women_valuations[w][m]) * x[m, w] for m in men for w in women)
     
-    # Constraint: Each person is matched to exactly one partner
+    # Constraints
+    # Each participant is matched exactly once
     for m in men:
         prob += pulp.lpSum(x[m, w] for w in women) == 1
     
@@ -711,7 +706,7 @@ def utilitarian_matching(men_valuations, women_valuations):
     prob.solve(pulp.PULP_CBC_CMD(msg=False))
     
     # Extract the solution
-    matching = {m: next(w for w in women if x[m, w].value() > 0.5) for m in men}
+    matching = {m: max(women, key=lambda w: x[m, w].value()) for m in men}
     
     return matching
 

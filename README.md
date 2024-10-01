@@ -902,7 +902,7 @@ $$
 Where:
 - $$L$$ and $$R$$ are the two sets of participants to be matched.
 - $$h(\ell,r)$$ is the rank of $$r$$ in $$\ell$$'s preference list.
-- $$\mu_{\ell,r}$$ is a binary variable indicating whether participant $$\ell$$ and participant $$r$$ are matched.
+- $$\mu_{\ell,r}$$ is the extent to which $$\ell$$ and $$r$$ are matched.
 
 This formulation minimizes the sum of ranks for all matched pairs, ensuring that each participant is matched exactly once. Unlike the stable matching variants, this formulation does not include stability constraints.
 
@@ -986,7 +986,8 @@ $$
 Where:
 - $$L$$ and $$R$$ are the two sets of participants to be matched.
 - $$v(\ell,r)$$ is the valuation that participant $$\ell$$ assigns to being matched with participant $$r$$.
-- $$\mu_{\ell,r}$$ is a binary variable indicating whether participant $$\ell$$ and participant $$r$$ are matched.
+- $$v(r,\ell)$$ is the valuation that participant $$r$$ assigns to being matched with participant $$\ell$$.
+- $$\mu_{\ell,r}$$ is the extent to which $$\ell$$ and $$r$$ are matched.
 
 ## Implementation
 
@@ -1040,7 +1041,7 @@ The **Utilitarian Matching** algorithm without stability constraints finds a mat
 The objective function for the Utilitarian Matching problem can be formulated as follows:
 
 $$
-\text{maximize} \quad \sum_{(\ell,r) \in L \times R} v(\ell,r) \cdot \mu_{\ell,r}
+\text{maximize} \quad \sum_{(\ell,r) \in L \times R} (v(\ell,r)+v(\ell,r))\cdot \mu_{\ell,r}
 $$
 
 
@@ -1063,8 +1064,9 @@ $$
 
 Where:
 - $$L$$ and $$R$$ are the two sets of participants to be matched.
-- $$v(\ell,r)$$ is the utility (or valuation) that participant $$\ell$$ assigns to being matched with participant $$r$$.
-- $$\mu_{\ell,r}$$ is a binary variable indicating whether participant $$\ell$$ and participant $$r$$ are matched.
+- $$v(\ell,r)$$ is the valuation that participant $$\ell$$ assigns to being matched with participant $$r$$.
+- $$v(r,\ell)$$ is the valuation that participant $$r$$ assigns to being matched with participant $$\ell$$.
+- $$\mu_{\ell,r}$$ is the extent to which $$\ell$$ and $$r$$ are matched.
 
 This formulation maximizes the sum of utilities for all matched pairs, ensuring that each participant is matched exactly once. Unlike the stable matching variants, this formulation does not include stability constraints.
 
