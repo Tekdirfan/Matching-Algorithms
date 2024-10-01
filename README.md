@@ -629,7 +629,7 @@ $$
 Where:
 - $$L$$ and $$R$$ are the two sets of participants to be matched.
 - $$h(\ell,r)$$ is the rank of $$r$$ in $$\ell$$'s preference list.
-- $$\mu_{\ell,r}$$ is a binary variable indicating whether participant $$\ell$$ and participant $$r$$ are matched.
+- $$\mu_{\ell,r}$$ is the extent to which $$\ell$$ and $$r$$ are matched.
 - $$s \succ_\ell r$$ means that participant $$\ell$$ prefers participant $$s$$ to participant $$r$$.
 
 This formulation minimizes the sum of ranks while ensuring that each participant is matched exactly once and that the matching is stable. The algorithm produces a matching that is Pareto efficient with respect to the participants' preferences.
@@ -699,14 +699,14 @@ The **Nash Stable Matching** algorithm finds a stable matching that maximizes th
 The objective function for the Nash Stable Matching problem can be formulated as follows:
 
 $$
-\text{maximize} \quad \prod_{(\ell,r) \in L \times R} v(\ell,r)^{\mu_{\ell,r}}
+\text{maximize} \quad \prod_{(\ell,r) \in L \times R} (v(\ell,r) \times v(r,\ell))^{\mu_{\ell,r}}
 $$
 
 
 which is equivalent to maximizing:
 
 $$
-\text{maximize} \quad \sum_{(\ell,r) \in L \times R} \mu_{\ell,r} \log v(\ell,r)
+\text{maximize} \quad \sum_{(\ell,r) \in L \times R} \mu_{\ell,r} (\log v(\ell,r)+\log v(r,\ell))
 $$
 
 
@@ -735,7 +735,8 @@ $$
 Where:
 - $$L$$ and $$R$$ are the two sets of participants to be matched.
 - $$v(\ell,r)$$ is the valuation that participant $$\ell$$ assigns to being matched with participant $$r$$.
-- $$\mu_{\ell,r}$$ is a binary variable indicating whether participant $$\ell$$ and participant $$r$$ are matched.
+- $$v(r,\ell)$$ is the valuation that participant $$r$$ assigns to being matched with participant $$\ell$$.
+- $$\mu_{\ell,r}$$ is the extent to which $$\ell$$ and $$r$$ are matched.
 
 This formulation maximizes the product of valuations (Nash social welfare) while ensuring that each participant is matched exactly once and that the matching is stable. The logarithmic transformation allows us to solve this as a linear programming problem.
 
