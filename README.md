@@ -788,7 +788,7 @@ The **Utilitarian Stable Matching** algorithm finds a stable matching that maxim
 The objective function for the Utilitarian Stable Matching problem can be formulated as follows:
 
 $$
-\text{maximize} \quad \sum_{(\ell,r) \in L \times R} v(\ell,r) \cdot \mu_{\ell,r}
+\text{maximize} \quad \sum_{(\ell,r) \in L \times R} (v(\ell,r)+v(r,\ell)) \cdot \mu_{\ell,r}
 $$
 
 
@@ -817,7 +817,8 @@ $$
 Where:
 - $$L$$ and $$R$$ are the two sets of participants to be matched.
 - $$v(\ell,r)$$ is the valuation that participant $$\ell$$ assigns to being matched with participant $$r$$.
-- $$\mu_{\ell,r}$$ is a binary variable indicating whether participant $$\ell$$ and participant $$r$$ are matched.
+- $$v(r,\ell)$$ is the valuation that participant $$r$$ assigns to being matched with participant $$\ell$$.
+- $$\mu_{\ell,r}$$ is the extent to which $$\ell$$ and $$r$$ are matched.
 
 This formulation maximizes the sum of valuations while ensuring that each participant is matched exactly once and that the matching is stable. The algorithm produces a matching that is both stable and Pareto efficient.
 
